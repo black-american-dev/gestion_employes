@@ -23,3 +23,39 @@ export const getEmployeByName = async (req,res)=>{
     }
     res.status(200).json(row)
 }
+export const postEmploye = async (req, res) => {
+  const {
+    employe_id,
+    cin,
+    nom,
+    prenom,
+    ville,
+    departement,
+    date_embauche,
+    statut,
+  } = req.body;
+
+  if (!employe_id || !cin || !nom || !prenom || !ville || !departement || !date_embauche || !statut) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const [exists] = await db.query(
+    "SELECT employee_id FROM employes WHERE employee_id = ? OR cin = ?",
+    [employe_id, cin]
+  );
+
+  if (exists.length > 0) {
+    return res.status(409).json({
+      message: "Employee with this ID or CIN already exists",
+    });
+  }
+
+  await db.query(
+    `INSERT INTO employes 
+     (employee_id, cin, nom, prenom, nom_ville, id_departement, date_embauche, statut)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [employe_id, cin, nom, prenom, ville, departement, date_embauche, statut]
+  );
+
+  res.status(201).json({ message: "Employee added successfully" });
+};

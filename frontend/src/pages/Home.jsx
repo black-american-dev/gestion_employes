@@ -5,10 +5,12 @@ import Button from "../components/ArrowButton";
 import SearchInput from "../components/SearchInput";
 import './navbar.css'
 import DropDown from "../components/DropDown";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [employees, setEmployees] = useState([]);
   const [filter, setFilter] = useState(0);
+  const navigate = useNavigate()
 
   useEffect(() => {
     api.get("/employes")
@@ -20,17 +22,19 @@ function Home() {
   return (
     <>
       <div className="navbar">
-        <div>
-          <h1>my app</h1>
-        </div>
+        <h1 className="logo">Employee Manager</h1>
         <SearchInput />
+        <button onClick={()=> navigate("/addEmploye")} className="addButton">Add employe</button>
       </div>
-      <div className="navbar">
-        <Button/>
-        <DropDown onChange={setFilter}/>
+
+      <div className="toolbar">
+        <Button />
+        <DropDown onChange={setFilter} />
       </div>
-      
-      <Table emp={filtredEmploye} />
+      <div>
+        <Table emp={filtredEmploye} />
+      </div>
+
     </>
   );
 }

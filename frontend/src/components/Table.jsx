@@ -5,41 +5,46 @@ function Table(props) {
     const employees = props.emp
     const navigate = useNavigate()
     return (
-        <div className="wrapper">
-            <h2>Employees</h2>
-            <div className="table-container">
-                <table>
-                <thead>
-                    <tr>
-                    <th>CIN</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>statut</th>
-                    </tr>
-                </thead>
-                    <tbody>
-                        {employees.map((emp) => (
-                            <tr key={emp.id} onClick={() => navigate(`/employe/${emp.employee_id}`)}>
-                                
-                                <td>{emp.cin}</td>
-                                <td>{emp.nom}</td>
-                                <td>{emp.prenom}</td>
-                                <td>
-                                <span
-                                    className={`status ${
-                                    emp.statut === "active" ? "active" : "inactive"
-                                    }`}
-                                >
-                                    {emp.statut ?? "Unknown"}
-                                </span>
-                                </td>
-                                
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div className="wrapper">
+  <div className="table-header">
+    <h2>Employees</h2>
+    <span className="count">{employees.length} total</span>
+  </div>
+
+  <div className="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>employee id</th>
+          <th>CIN</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Ville</th>
+          <th>Date embache</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {employees.map(emp => (
+          <tr key={emp.id} onClick={() => navigate(`/employe/${emp.employee_id}`)}>
+            <td>{emp.employee_id}</td>
+            <td>{emp.cin}</td>
+            <td>{emp.nom}</td>
+            <td>{emp.prenom}</td>
+            <td>{emp.nom_ville}</td>
+            <td>{emp.date_embauche}</td>
+            <td>
+              <span className={`badge ${emp.statut === "active" ? "active" : "inactive"}`}>
+                {emp.statut ?? "Unknown"}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
     )
 }
 
