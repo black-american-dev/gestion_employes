@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  direction: rtl;
+  padding: 40px;
+}
+h1 {
+  text-align: center;
+}
+.row {
+  margin: 15px 0;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>شهادة عمل</h1>
+
+<div class="row">يشهد أن السيد(ة): <strong><%= nom %> <%= prenom %></strong></div>
+<div class="row">رقم التأجير: <strong><%= employee_id %></strong></div>
+<div class="row">رقم البطاقة الوطنية: <strong><%= cin %></strong></div>
+<div class="row">المدينة: <strong><%= nom_ville %></strong></div>
+<div class="row">تاريخ التوظيف: <strong><%= hire_date %></strong></div>
+
+<br><br>
+
+<div class="row">حررت هذه الشهادة بطلب من المعني بالأمر.</div>
+
+<br><br>
+
+<div class="row" style="text-align:left">
+التاريخ: <%= today %>
+</div>
+
+</body>
+</html>

@@ -5,13 +5,8 @@ function Table(props) {
     const employees = props.emp
     const navigate = useNavigate()
     return (
-<div className="wrapper">
-  <div className="table-header">
-    <h2>Employees</h2>
-    <span className="count">{employees.length} total</span>
-  </div>
-
-  <div className="table-container">
+<div className="glass-card">
+  <h3 className="card-title">Employees</h3>
     <table>
       <thead>
         <tr>
@@ -42,7 +37,7 @@ function Table(props) {
         ))}
       </tbody>
     </table>
-  </div>
+  <span className="count">{employees.length} total</span>
 </div>
 
     )

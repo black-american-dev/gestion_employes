@@ -1,25 +1,39 @@
 :root {
-  --primary: #3b82f6;        /* Blue accent */
-  --primary-light: #1e3a8a;  /* Dark blue background accent */
-
-  --bg: #0f172a;             /* App background */
-  --card: #111827;           /* Cards / table background */
-
-  --text: #e5e7eb;           /* Main text */
-  --muted: #9ca3af;          /* Secondary text */
-
-  --border: #1f2937;         /* Subtle borders */
-  --radius: 12px;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --text-main: #ffffff;
+  --text-muted: rgba(255,255,255,0.75);
+  --radius-xl: 20px;
 }
 
-
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
 body {
-  margin: 0;
-  font-family: "Inter", "Segoe UI", sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
+  min-height: 100vh;
+  background: linear-gradient(135deg, #090920 0%, #121744 40%, #121744 100%);
+  color: var(--text-main);
+}
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: white;
+  color: #121744;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.25);
+  color: white;
 }
