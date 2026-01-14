@@ -1,13 +1,31 @@
 import db from "../db/config.js"
 
 export const getCompanyEmployes = async (req,res)=>{
-    const[rows]= await db.query("SELECT * FROM company_employees")
+    const [rows] = await db.query(`
+    SELECT 
+      company_employees.departement_id,
+      departements.departement_nom,
+      employee_id,
+      cin,
+      nom,
+      prenom,
+      cadre_actuel,
+      nom_ville,
+      status,
+      hire_date
+    FROM company_employees
+    JOIN departements
+      ON company_employees.departement_id = departements.id
+  `)
     res.status(200).json(rows)
 }
 export const getCompanyEmployeById = async (req,res)=>{
     const emp_id = req.params.id
     
-    const [row] = await db.query("SELECT * FROM company_employees WHERE employee_id = ?",[emp_id])
+    const [row] = await db.query(`
+      SELECT employee_id,cin,nom,prenom,cadre_actuel,nom_ville,status,hire_date,departement_nom FROM company_employees 
+      join departements on company_employees.departement_id = departements.id WHERE employee_id = ?
+      `,[emp_id])
     if(row.length === 0) {
         return res.status(401).json({message: `employe with this ${emp_id} is not found`})
     }
@@ -18,7 +36,10 @@ export const getCompanyEmployeByName = async (req,res)=>{
     const prenom = req.body.prenom
   
     
-    const [row] = await db.query("SELECT * FROM company_employees WHERE nom = ? or prenom = ?",[nom,prenom])
+    const [row] = await db.query(`
+      SELECT employee_id,cin,nom,prenom,cadre_actuel,nom_ville,status,hire_date,departement_nom FROM company_employees 
+      join departements on company_employees.departement_id = departements.id WHERE nom = ? or prenom = ?
+      `,[nom,prenom])
     if(row.length === 0) {
         return res.status(401).json({message: `post with this this name : ${nom} or this prenom : ${prenom} is not found`})
     }
@@ -52,11 +73,12 @@ export const postCompanyEmploye = async (req, res) => {
   }
 
   await db.query(
-    `INSERT INTO company_employees 
-      (employee_id, cin, nom, prenom, nom_ville, id_departement, hire_date)
-      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  `INSERT INTO company_employees 
+    (employee_id, cin, nom, prenom, nom_ville, departement_id, hire_date, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [employe_id, cin, nom, prenom, ville, departement, date_embauche, statut]
   );
+
 
   res.status(201).json({ message: "Employee added successfully" });
 };

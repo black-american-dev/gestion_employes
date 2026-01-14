@@ -1,0 +1,104 @@
+/* layout */
+.header {
+  padding: 24px 0;
+  margin-bottom: 60px;
+}
+
+.navContainer {
+  max-width: 1700px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* hero section */
+.hero {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+}
+
+.heroTitle {
+  font-size: 46px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.heroTitle span {
+  font-weight: 300;
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  opacity: 0.85;
+  margin-bottom: 30px;
+}
+
+/* card */
+.card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 25px;
+}
+
+/* info rows */
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.infoRow strong {
+  font-weight: 600;
+}
+
+/* buttons (PAGE ONLY) */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: white;
+  color: #121744;
+  margin-top: 15px;
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  margin-top: 10px;
+}
+
+/* history */
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+}
+
+.historyItem:last-child {
+  border-bottom: none;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}

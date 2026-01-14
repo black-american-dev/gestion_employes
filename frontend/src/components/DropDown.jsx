@@ -1,21 +1,18 @@
 import { useState } from "react";
 import "./DropDown.css";
 
-function DropDown({ onChange }) {
+function DropDown({ options ,onChange }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("All Departments");
 
-  const options = [
-    { label: "All Departments", value: 0 },
-    { label: "HR", value: 1 },
-    { label: "IT", value: 2 },
-    { label: "Finance", value: 3 },
-  ];
+
 
   const handleSelect = (option) => {
     setSelected(option.label);
     onChange(option.value);
     setOpen(false); // ✅ CLOSE after click
+    console.log(option.value);
+    
   };
 
   return (

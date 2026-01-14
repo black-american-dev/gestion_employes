@@ -17,6 +17,7 @@ function Table(props) {
           <th>Cadre actuel</th>
           <th>Ville</th>
           <th>Departement name</th>
+          <th>Departement</th>
           <th>Status</th>
           <th>Date embache</th>
         </tr>
@@ -30,7 +31,8 @@ function Table(props) {
             <td>{emp.prenom}</td>
             <td>{emp.cadre_actuel}</td>
             <td>{emp.nom_ville}</td>
-            <td>{emp.departement_nom}</td>
+            <td>{emp.entity_type}</td>
+            <td>{emp.department}</td>
             <td>
               <span className={`badge ${emp.status === "active" ? "active" : "non active"}`}>
                 {emp.status ?? "Unknown"}

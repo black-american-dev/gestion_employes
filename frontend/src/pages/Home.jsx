@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api/api";
 import Table from "../components/table";
-import Button from "../components/ArrowButton";
+import TableJudicial from "../components/TableJudicial";
 import SearchInput from "../components/SearchInput";
 import './navbar.css'
 import DropDown from "../components/DropDown";
@@ -12,8 +12,23 @@ import Dashboard from "../components/Dashboard";
 function Home() {
   const [employees, setEmployees] = useState([]);
   const [judicialEmployees, setJudicialEmployees] = useState([]);
-  const [filter, setFilter] = useState(0);
+  const [companyFilter, setCompanyFilter] = useState(0);
+  const [judicialFilter, setJudicialFilter] = useState(0);
   const navigate = useNavigate()
+
+    const options = [
+    { label: "All Departments", value: 0 },
+    { label: "حفظ الأرشيف", value: 1 },
+    { label: "الموارد البشرية", value: 2 },
+    { label: "التجهيز و نظم المعلومات", value: 3 },
+  ];
+
+  const judicialOptions = [
+  { label: "All Entities", value: 0 },
+  { label: "محكمة الاستئناف", value: "محكمة الاستئناف" },
+  { label: "المحكمة الابتدائية", value: "المحكمة الابتدائية" },
+  { label: "المركز القضائي", value: "المركز القضائي" },
+];
 
 
   useEffect(() => {
@@ -26,7 +41,20 @@ function Home() {
       .then((res) => setJudicialEmployees(res.data))
       .catch((error) => console.error(error));
   }, []);
-  const filtredEmploye = filter === 0 ? employees : employees.filter( emp => emp.id_departement === filter)
+  
+  const filteredCompanyEmployees =
+    companyFilter === 0
+      ? employees
+      : employees.filter(
+          emp => Number(emp.departement_id) === companyFilter
+        );
+
+  const filteredJudicialEmployees =
+    judicialFilter === 0
+      ? judicialEmployees
+      : judicialEmployees.filter(
+          emp => emp.entity_type === judicialFilter
+        );
 
   return (
     <>
@@ -34,11 +62,11 @@ function Home() {
       <div className="nav-container">
         <div className="logo">
           HR<span>Docs</span>
-          <button class="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
-          <button class="btn">GENERATE</button>
-          <button class="btn">DOCUMENTS</button>
-          <button class="btn">DEPARTMENTS</button>
-          <button class="btn">SETTINGS</button>
+          <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
+          <button className="btn">GENERATE</button>
+          <button className="btn">DOCUMENTS</button>
+          <button className="btn">DEPARTMENTS</button>
+          <button className="btn">SETTINGS</button>
         </div>
         <SearchInput />
       </div>
@@ -47,16 +75,16 @@ function Home() {
       <Dashboard />
     </div>
     <div className="toolbar">
-      <DropDown onChange={setFilter} />
+      <DropDown options={options} onChange={setCompanyFilter} />
     </div>
     <div>
-      <Table emp={filtredEmploye} />
+      <Table emp={filteredCompanyEmployees} />
     </div>
     <div className="toolbar">
-      <DropDown onChange={setFilter} />
+      <DropDown options={judicialOptions} onChange={setJudicialFilter} />
     </div>
     <div>
-      <Table emp={judicialEmployees} />
+      <TableJudicial emp={filteredJudicialEmployees} />
     </div>
     </>
   );

@@ -1,42 +1,246 @@
+see the files i have send you make them like this in the ui : 
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>HR Certificate Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
 body {
-  font-family: 'Arial', sans-serif;
-  direction: rtl;
-  padding: 40px;
+    background: linear-gradient(135deg, #090920 0%, #121744 30%, #121744 100%);
+    color: white;
+    min-height: 100vh;
 }
-h1 {
-  text-align: center;
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
 }
-.row {
-  margin: 15px 0;
-  font-size: 18px;
+
+/* NAVBAR */
+header {
+    padding: 20px 0;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.logo span {
+    font-weight: 300;
+    opacity: 0.8;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* BLUR SEARCH */
+.search-container {
+    position: relative;
+}
+
+.search-box {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 12px 20px 12px 45px;
+    width: 220px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.search-box:focus {
+    outline: none;
+    width: 280px;
+    background: rgba(255,255,255,0.25);
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* MAIN */
+main {
+    padding: 60px 0;
+}
+
+/* HERO → EMPLOYEE LOOKUP */
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+}
+
+.hero-title {
+    font-size: 46px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-title span {
+    font-weight: 300;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    opacity: 0.85;
+    margin-bottom: 30px;
+}
+
+/* GLASS CARD */
+.card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 25px;
+}
+
+/* EMPLOYEE INFO */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.info-row strong {
+    font-weight: 600;
+}
+
+/* BUTTONS */
+.btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: white;
+    color: #121744;
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    margin-top: 10px;
+}
+
+/* HISTORY */
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: 14px;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+/* RESPONSIVE */
+@media(max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<h1>شهادة عمل</h1>
+<header>
+    <div class="nav-container">
+        <div class="logo">HR<span>Docs</span></div>
 
-<div class="row">يشهد أن السيد(ة): <strong><%= nom %> <%= prenom %></strong></div>
-<div class="row">رقم التأجير: <strong><%= employee_id %></strong></div>
-<div class="row">رقم البطاقة الوطنية: <strong><%= cin %></strong></div>
-<div class="row">المدينة: <strong><%= nom_ville %></strong></div>
-<div class="row">تاريخ التوظيف: <strong><%= hire_date %></strong></div>
+        <div class="main-nav">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input class="search-box" placeholder="Employee number (ex: 1001)">
+            </div>
+        </div>
+    </div>
+</header>
 
-<br><br>
+<main>
+    <section class="hero">
 
-<div class="row">حررت هذه الشهادة بطلب من المعني بالأمر.</div>
+        <!-- LEFT -->
+        <div>
+            <h1 class="hero-title">
+                Employee <span>Certificate Generator</span>
+            </h1>
+            <p class="hero-subtitle">
+                Type an employee number to instantly generate official company PDF documents.
+            </p>
 
-<br><br>
+            <div class="card">
+                <h3 style="margin-bottom:15px;">Employee Information</h3>
 
-<div class="row" style="text-align:left">
-التاريخ: <%= today %>
+                <div class="info-row"><span>Name</span><strong>Mohamed</strong></div>
+                <div class="info-row"><span>Employee #</span><strong>1001</strong></div>
+                <div class="info-row"><span>CIN</span><strong>AA123</strong></div>
+                <div class="info-row"><span>Department</span><strong>HR</strong></div>
+                <div class="info-row"><span>City</span><strong>Casablanca</strong></div>
+
+                <button class="btn btn-primary">Generate Work Certificate (PDF)</button>
+                <button class="btn btn-secondary">Generate Administrative Certificate</button>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="card">
+            <h3 style="margin-bottom:15px;">Generated Documents</h3>
+
+            <div class="history-item">
+                <span>Work Certificate</span>
+                <span>10 Jan 2025</span>
+            </div>
+
+            <div class="history-item">
+                <span>Administrative Certificate</span>
+                <span>03 Nov 2024</span>
+            </div>
+
+        </div>
+
+    </section>
+</main>
+
 </div>
-
 </body>
 </html>
