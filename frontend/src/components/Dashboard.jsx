@@ -11,7 +11,7 @@ function Dashboard() {
             <p className="hero-subtitle">Welcome to your employee management system. Monitor statistics, manage employees, and generate certificates all in one place.</p>
             
             <div className="quick-actions">
-                <button className="btn btn-primary" style={{
+                <button className="btn btnPrimary" style={{
                     border: "2px solid white",
                     padding: "12px 10px 12px 10px",
                     width: "150px",
@@ -21,10 +21,10 @@ function Dashboard() {
                     }} id="quickGenerateBtn">
                     <i className="fas fa-file-pdf"></i> Quick Generate
                 </button>
-                <button className="btn btn-secondary">
+                <button className="btn btnSecondary">
                     <i className="fas fa-chart-line"></i> View Reports
                 </button>
-                <button className="btn btn-secondary" onClick={()=> navigate("/addEmploye")}>
+                <button className="btn btnSecondary" onClick={()=> navigate("/addEmploye")}>
                     <i className="fas fa-user-plus"></i> Add Employee
                 </button>
             </div>

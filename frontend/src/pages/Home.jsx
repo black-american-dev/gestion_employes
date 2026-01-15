@@ -61,11 +61,11 @@ function Home() {
     <header className="header">
       <div className="nav-container">
         <div className="logo">
-          HR<span>Docs</span>
+          <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
           <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
           <button className="btn">GENERATE</button>
           <button className="btn">DOCUMENTS</button>
-          <button className="btn">DEPARTMENTS</button>
+          <button className="btn" onClick={() => navigate("/anualAbsence")}>ANNUAL ABCENCE</button>
           <button className="btn">SETTINGS</button>
         </div>
         <SearchInput />

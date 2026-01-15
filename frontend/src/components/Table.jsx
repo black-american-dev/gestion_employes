@@ -23,7 +23,7 @@ function Table(props) {
       </thead>
       <tbody>
         {employees.map(emp => (
-          <tr key={emp.id} onClick={() => navigate(`/employe/${emp.employee_id}`)}>
+          <tr key={emp.id} onClick={() => navigate(`/companyEmploye/${emp.employee_id}`)}>
             <td>{emp.employee_id}</td>
             <td>{emp.cin}</td>
             <td>{emp.nom}</td>

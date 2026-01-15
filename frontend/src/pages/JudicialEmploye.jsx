@@ -5,25 +5,47 @@ import styles from "./Employe.module.css";
 import SearchInput from "../components/SearchInput.jsx";
 import './navbar.css'
 
-function Employe() {
+function JudicialEmploye() {
   const [employee, setEmployee] = useState({});
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     api
-      .get(`/companyEmploye/${id}`)
+      .get(`/judicialEmploye/${id}`)
       .then((res) => setEmployee(res.data[0]))
       .catch(console.error);
     
   }, [id]);
+
+   const handleGenerate = async (id) => {
+    const res = await api.post(
+      `/generateJudicial/${id}`,
+      {},
+      { responseType: "blob" } // 🔥 IMPORTANT
+    );
+  
+    // Create download
+    const url = window.URL.createObjectURL(
+      new Blob([res.data], { type: "application/pdf" })
+    );
+  
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${id}_attestation.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  
+    window.URL.revokeObjectURL(url);
+  };
   return (
     <>
       {/* HEADER */}
       <header className="header">
       <div className="nav-container">
         <div className="logo">
-          HR<span>Docs</span>
+          <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
           <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
           <button className="btn">GENERATE</button>
           <button className="btn">DOCUMENTS</button>
@@ -52,10 +74,10 @@ function Employe() {
               <div className={styles.infoRow}><span>Name</span><strong>{employee.nom}</strong></div>
               <div className={styles.infoRow}><span>Employee ID</span><strong>{employee.employee_id}</strong></div>
               <div className={styles.infoRow}><span>CIN</span><strong>{employee.cin}</strong></div>
-              <div className={styles.infoRow}><span>Department</span><strong>{employee.departement_nom}</strong></div>
+              <div className={styles.infoRow}><span>Department</span><strong>{employee.department}</strong></div>
               <div className={styles.infoRow}><span>City</span><strong>{employee.nom_ville}</strong></div>
 
-              <button className={`${styles.btn} ${styles.btnPrimary}`}>
+              <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => handleGenerate(employee.employee_id)}>
                 Generate Work Certificate (PDF)
               </button>
               <button className={`${styles.btn} ${styles.btnSecondary}`}>
@@ -84,4 +106,4 @@ function Employe() {
   );
 }
 
-export default Employe;
+export default JudicialEmploye;

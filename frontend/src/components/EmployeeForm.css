@@ -1,35 +1,44 @@
 .form-wrapper {
-  padding: 32px;
+  padding: 60px 20px;
   display: flex;
   justify-content: center;
 }
 
+/* GLASS CARD */
 .form-card {
-  background: var(--card);
   width: 100%;
-  max-width: 720px;
-  padding: 32px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  max-width: 760px;
+  padding: 36px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 20px 40px rgba(0,0,0,0.35);
 }
 
+/* TITLE */
 .form-card h2 {
-  margin: 0;
-  font-size: 22px;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .subtitle {
-  color: var(--muted);
-  margin-bottom: 24px;
   font-size: 14px;
+  opacity: 0.75;
+  margin-bottom: 30px;
 }
 
+/* GRID */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 22px;
 }
 
+/* FIELD */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -38,75 +47,74 @@
 .form-group label {
   font-size: 13px;
   margin-bottom: 6px;
-  color: var(--muted);
+  opacity: 0.8;
 }
 
+/* INPUTS */
 .form-group input,
 .form-group select {
-  padding: 10px 12px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  color: white;
   font-size: 14px;
+  transition: all 0.25s ease;
 }
 
+.form-group input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+/* GLOW ON FOCUS */
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--primary);
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
 }
 
+/* SELECT OPTIONS */
+.form-group select option {
+  background: #121744;
+  color: white;
+}
+
+/* DATE INPUT FIX */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* ACTIONS */
 .form-actions {
-  margin-top: 28px;
+  margin-top: 36px;
   display: flex;
   justify-content: flex-end;
 }
 
+/* PRIMARY BUTTON */
 .btn-primary {
-  background: var(--primary);
-  color: white;
+  padding: 14px 26px;
+  border-radius: 30px;
   border: none;
-  padding: 12px 20px;
-  border-radius: var(--radius);
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+ 
+  color: #121744;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(255,255,255,0.25);
 }
 
-.form-group select {
-  background-color: #111827;   /* dark card */
-  color: var(--text);
-  border: 1px solid var(--border);
-    cursor: pointer;
-
-}
-
-/* options */
-.form-group select option {
-  background-color: #111827;
-  color: var(--text);
-}
-
-
-.dateInput {
-  border: 2px solid transparent;
-  width: 15em;
-  height: 2.5em;
-  padding-left: 0.8em;
-  outline: none;
-  overflow: hidden;
-  background-color: #f3f3f3;
-  border-radius: 10px;
-  transition: all 0.5s;
-}
-
-.dateInput:hover,
-.dateInput:focus {
-  border: 2px solid #4a9dec;
-  box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
-  background-color: white;
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }

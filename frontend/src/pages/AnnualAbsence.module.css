@@ -1,0 +1,25 @@
+.searchBox{
+    margin: 40px auto;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    padding: 12px 20px 12px 45px;
+    width: 220px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+.searchBox:hover {
+    cursor: pointer;
+}
+.activeYear {
+  background-color: white;
+  color: #000;
+  cursor: pointer;
+}
+
+/* optional hover polish */
+.searchBox:hover {
+  opacity: 0.85;
+}

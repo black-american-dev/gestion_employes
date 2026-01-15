@@ -51,13 +51,14 @@ export const postCompanyEmploye = async (req, res) => {
     cin,
     nom,
     prenom,
+    cadre_actuel,
     ville,
     departement,
     date_embauche,
     statut,
   } = req.body;
 
-  if (!employe_id || !cin || !nom || !prenom || !ville || !departement || !date_embauche || !statut) {
+  if (!employe_id || !cin || !nom || !prenom || !cadre_actuel || !ville || !departement || !date_embauche || !statut) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -74,10 +75,21 @@ export const postCompanyEmploye = async (req, res) => {
 
   await db.query(
   `INSERT INTO company_employees 
-    (employee_id, cin, nom, prenom, nom_ville, departement_id, hire_date, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [employe_id, cin, nom, prenom, ville, departement, date_embauche, statut]
-  );
+  (employee_id, cin, nom, prenom, cadre_actuel, nom_ville, departement_id, hire_date, status)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    employe_id,
+    cin,
+    nom,
+    prenom,
+    cadre_actuel,
+    ville,
+    departement,
+    date_embauche,
+    statut
+  ]
+);
+
 
 
   res.status(201).json({ message: "Employee added successfully" });

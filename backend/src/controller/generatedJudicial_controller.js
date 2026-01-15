@@ -5,13 +5,29 @@ import db from '../db/config.js';
 
 import { fileURLToPath } from "url";
 
-export const generateAttestation = async (req, res) => {
+export const generateJudicialAttestation = async (req, res) => {
   try {
     const employeeId = req.params.id;
 
     // 1️⃣ Fetch employee
     const [rows] = await db.query(
-      'SELECT * FROM company_employees WHERE employee_id = ?',
+      `
+   SELECT 
+      judicial_employees.judicial_entity_id,
+      judicial_entities.entity_type,
+      employee_id,
+      cin,
+      nom,
+      prenom,
+      cadre_actuel,
+      department,
+      nom_ville,
+      status,
+      hire_date
+    FROM judicial_employees
+    JOIN judicial_entities
+      ON judicial_employees.judicial_entity_id = judicial_entities.id
+  WHERE employee_id = ?`,
       [employeeId]
     );
 

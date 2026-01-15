@@ -12,8 +12,9 @@ import {getJudicialEmployes,
     deleteJudicialEmploye} 
     from "../controller/judicialEmployees_controller.js"
 import { generateAttestation } from "../controller/generated_controller.js"
-import { importAnnualAbsence } from "../controller/annualAbsence_controller.js"
+import { getAnnualAbsent, importAnnualAbsence } from "../controller/annualAbsence_controller.js"
 import uploadExcel from "../middelwares/uploadExcel.js"
+import { generateJudicialAttestation } from "../controller/generatedJudicial_controller.js"
 
 
 const router = express.Router()
@@ -31,7 +32,9 @@ router.post("/judicialEmploye", postJudicialEmploye)
 router.delete("/judicialEmploye/:id" , deleteJudicialEmploye)
 // pdf generated :
 router.post("/generate/:id" , generateAttestation)
+router.post("/generateJudicial/:id" , generateJudicialAttestation)
 // annual absences :
 router.post("/annual-absence/import", uploadExcel.single("file"), importAnnualAbsence)
+router.get("/annual-absence", getAnnualAbsent)
 
 export default router;

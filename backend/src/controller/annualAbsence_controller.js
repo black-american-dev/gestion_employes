@@ -81,3 +81,12 @@ export const importAnnualAbsence = async (req, res) => {
     });
   }
 };
+
+
+export const getAnnualAbsent = async (req,res) => {
+   const [rows] = await db.query(`
+    SELECT *
+    FROM annual_absences
+  `)
+    res.status(200).json(rows)
+}

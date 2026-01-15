@@ -4,17 +4,18 @@ import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 
 function EmployeeForm() {
-  const [form, setForm] = useState({
-  employe_id: "",
-  cin: "",
-  nom: "",
-  prenom: "",
-  cadre_actuel: "", 
-  ville: "",
-  date_embauche: "",
-  departement: "",
-  statut: "active",
+const [form, setForm] = useState({
+    employe_id: "",
+    cin: "",
+    nom: "",
+    prenom: "",
+    cadre_actuel: "",
+    judicial_entity_id: "",
+    department: "",
+    date_embauche: "",
+    statut: "active",
 });
+
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -22,23 +23,23 @@ function EmployeeForm() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const res = await api.post("/companyEmploye", form);
-    console.log(res.data);
-    navigate("/");
-  } catch (error) {
-    console.error("Backend error:", error.response?.data || error.message);
-    alert(error.response?.data?.message || "Insert failed");
-  }
-};
-
+    e.preventDefault();
+  
+    try {
+      const res = await api.post("/judicialEmploye", form);
+      console.log(res.data);
+      navigate("/");
+    } catch (error) {
+      console.error("Backend error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Insert failed");
+    }
+  };
+  
 
   return (
     <div className="form-wrapper">
       <div className="form-card">
-        <h2>Add New Company Employee</h2>
+        <h2>Add New Judicial Employee</h2>
         <p className="subtitle">Fill employee information</p>
 
         <form onSubmit={handleSubmit}>
@@ -84,7 +85,7 @@ function EmployeeForm() {
             </div>
 
             <div className="form-group">
-              <label>Prénom</label>
+              <label>cadre actuel</label>
               <input
                 name="cadre_actuel"
                 value={form.cadre_actuel}
@@ -93,15 +94,6 @@ function EmployeeForm() {
               />
             </div>
 
-            <div className="form-group">
-              <label>Ville</label>
-              <input
-                name="ville"
-                value={form.ville}
-                onChange={handleChange}
-                placeholder="Ville"
-              />
-            </div>
             <div className="form-group">
                 <label>Date de Embauche</label>
                 <input placeholder="Search" 
@@ -112,16 +104,32 @@ function EmployeeForm() {
             </div>
 
             <div className="form-group">
-              <label>Département</label>
+              <label>judicial entity</label>
               <select
-                name="departement"
-                value={form.departement}
+                name="judicial_entity_id"
+                value={form.judicial_entity_id}
                 onChange={handleChange}
               >
                 <option value="">Select department</option>
-                <option value="1">التجهيز و نظم المعلومات</option>
-                <option value="2">الموارد البشرية</option>
-                <option value="3">حفظ الأرشيف</option>
+                <option value="1">محكمة الاستئناف Laayoune</option>
+                <option value="2">المحكمة الابتدائي Laayoune</option>
+                <option value="3">المحكمة الابتدائي Smara</option>
+                <option value="4">المحكمة الابتدائي Dakhla</option>
+                <option value="5">المحكمة الابتدائي Boujdour</option>
+                <option value="6">المركز القضائي Tarfaya</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Département</label>
+              <select
+                name="department"
+                value={form.department}
+                onChange={handleChange}
+              >
+                <option value="">Select department</option>
+                <option value="1">النيابة العامة</option>
+                <option value="2">رئاسة</option>
               </select>
             </div>
 
@@ -133,7 +141,7 @@ function EmployeeForm() {
                 onChange={handleChange}
               >
                 <option value="active">Active</option>
-                <option value="non active">non active</option>
+                <option value="non active">Inactive</option>
               </select>
             </div>
           </div>

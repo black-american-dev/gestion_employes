@@ -24,3 +24,16 @@
     max-width: 600px;
     line-height: 1.6;
 }
+
+
+.btnPrimary {
+  background: white;
+  color: #121744;
+  margin-top: 15px;
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  margin-top: 10px;
+}
