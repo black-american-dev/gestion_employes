@@ -4,14 +4,19 @@ import path from "path";
 import db from "../db/config.js";
 import { fileURLToPath } from "url";
 
-export const generateAttestation = async (req, res) => {
+export const generateAttestationConge = async (req, res) => {
   try {
     const employeeId = req.params.id;
     const type = req.body.type; // example: "ATTESTATION_TRAVAIL"
+    const duty = req.body.duty
+    const subtitueEmployee = req.body.subtitueEmployee
+    const startDate = req.body.startDate
+    const endDate = req.body.endDate
+    const currentYear = new Date().getFullYear()
 
     // 1️⃣ Fetch employee
     const [rows] = await db.query(
-      "SELECT * FROM company_employees WHERE employee_id = ?",
+        "SELECT * FROM company_employees WHERE employee_id = ?",
       [employeeId]
     );
 
@@ -21,8 +26,8 @@ export const generateAttestation = async (req, res) => {
 
     const emp = rows[0];
 
-    // 2️⃣ SAME FIELD NAMES
     const fullName = `${emp.nom} ${emp.prenom}`;
+
     const grade = emp.cadre_actuel;
     const employe_id = String(emp.employee_id);
     const cin = emp.cin;
@@ -36,7 +41,7 @@ export const generateAttestation = async (req, res) => {
       __dirname,
       "..",
       "templates",
-      "ATTESTATION DE TRAVAIL temp (1).jpg"
+      "ATTESTATION DE CONGE (2).png"
     );
 
     const fontPath = path.join(
@@ -47,7 +52,7 @@ export const generateAttestation = async (req, res) => {
     );
 
     // 4️⃣ Output file info
-    const fileName = `${employeeId}_attestation_${Date.now()}.pdf`;
+    const fileName = `${employeeId}_attestation_DE_CONGE_${Date.now()}.pdf`;
     const generatedDir = path.join(__dirname, "..", "generated");
     const filePath = path.join(generatedDir, fileName);
 
@@ -74,14 +79,66 @@ export const generateAttestation = async (req, res) => {
     // 7️⃣ Template + text
     doc.image(templatePath, 0, 0, { width: 595, height: 842 });
     doc.font(fontPath).fontSize(12);
+    // ===== TEXT POSITIONS =====
+const rightColumnX = 60;
+const columnWidth = 180;
 
-    doc.text(fullName, 60, 375, { width: 180, align: "right" });
-    doc.text(grade, 60, 405, { width: 180, align: "right" });
-    doc.text(employe_id, 60, 435, { width: 180, align: "right" });
-    doc.text(cin, 60, 465, { width: 180, align: "right" });
-    doc.text(date, 205, 695, { width: 180, align: "right" });
+// Identity
+doc.text(fullName, 250, 165, {
+  width: columnWidth,
+  align: "right",
+});
 
+doc.text(grade, 250, 190, {
+  width: columnWidth,
+  align: "right",
+});
+
+doc.text(employe_id, 250, 210, {
+  width: columnWidth,
+  align: "right",
+});
+
+// Mission / leave info
+doc.text(duty, 210, 250, {
+  width: columnWidth,
+  align: "right",
+});
+
+// CIN
+doc.text(cin, 240, 295, {
+  width: columnWidth,
+  align: "right",
+});
+
+doc.text(subtitueEmployee, 50, 310, {
+  width: columnWidth,
+  align: "right",
+});
+
+doc.text(startDate, 250, 395, {
+  width: columnWidth,
+  align: "right",
+});
+
+doc.text(endDate, 120, 395, {
+  width: columnWidth,
+  align: "right",
+});
+
+doc.text(String(currentYear), 300, 375, {
+  width: columnWidth,
+  align: "right",
+});
+
+
+// Footer date
+doc.text(date, 205, 695, {
+  width: 180,
+  align: "right",
+});
     doc.end();
+
 
     // 8️⃣ Insert into history AFTER file is saved
     fileStream.on("finish", async () => {

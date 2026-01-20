@@ -5,6 +5,8 @@ import CompanyEmploye from './pages/CompanyEmploye'
 import JudicialEmploye from './pages/JudicialEmploye'
 import AddEmployee from './pages/AddEmployee'
 import AnnualAbsence from './pages/AnnualAbsence'
+import EmployeePage from './pages/EmployeePage'
+import Documents from './pages/Documents'
 function App() {
 
 
@@ -15,7 +17,9 @@ function App() {
         <Route path='/companyEmploye/:id' element={<CompanyEmploye />} />
         <Route path='/judicialEmploye/:id' element={<JudicialEmploye />} />
         <Route path='/addEmploye' element={<AddEmployee />} />
+        <Route path='/employeePage' element={<EmployeePage />} />
         <Route path='/anualAbsence' element={<AnnualAbsence />} />
+        <Route path='/documents' element={<Documents />} />
       </Routes>
     </BrowserRouter>
   )

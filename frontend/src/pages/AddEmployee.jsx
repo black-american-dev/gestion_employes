@@ -4,6 +4,7 @@ import Button from "../components/ArrowButton";
 import "./navbar.css"
 import { useNavigate } from "react-router-dom";
 import JudicialEmployeeForm from "../components/JudicialEmployeeForm";
+import NavbarHeader from "../components/NavbarHeader";
 
 function AddEmployee() {
   const [companyEmp, setCompanyEmp] = useState(false)
@@ -11,8 +12,9 @@ function AddEmployee() {
   const navigate = useNavigate()
   return (
     <>
-      <div style={{display: "flex", gap: "20px", marginTop: "10px",alignItems: "center",}}>
-        <Button onClick={()=> navigate(-1)}/><br />
+      <NavbarHeader />
+      <div style={{display: "flex", gap: "20px",maxWidth: "1500px", margin: "auto",alignItems: "center",}}>
+        <Button onClick={()=> navigate(-1)}/>
         <h1 className="logo">
           <p onClick={()=> navigate("/")}>Employee<span>Details</span></p>
         </h1>

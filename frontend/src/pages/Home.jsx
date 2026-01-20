@@ -5,8 +5,8 @@ import TableJudicial from "../components/TableJudicial";
 import SearchInput from "../components/SearchInput";
 import './navbar.css'
 import DropDown from "../components/DropDown";
-import { useNavigate } from "react-router-dom";
 import Dashboard from "../components/Dashboard";
+import NavbarHeader from "../components/NavbarHeader";
 
 
 function Home() {
@@ -14,7 +14,6 @@ function Home() {
   const [judicialEmployees, setJudicialEmployees] = useState([]);
   const [companyFilter, setCompanyFilter] = useState(0);
   const [judicialFilter, setJudicialFilter] = useState(0);
-  const navigate = useNavigate()
 
     const options = [
     { label: "All Departments", value: 0 },
@@ -58,19 +57,7 @@ function Home() {
 
   return (
     <>
-    <header className="header">
-      <div className="nav-container">
-        <div className="logo">
-          <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
-          <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
-          <button className="btn">GENERATE</button>
-          <button className="btn">DOCUMENTS</button>
-          <button className="btn" onClick={() => navigate("/anualAbsence")}>ANNUAL ABCENCE</button>
-          <button className="btn">SETTINGS</button>
-        </div>
-        <SearchInput />
-      </div>
-    </header>
+    <NavbarHeader />
     <div>
       <Dashboard />
     </div>

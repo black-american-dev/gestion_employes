@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api/api.js";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styles from "./Employe.module.css";
 import SearchInput from "../components/SearchInput.jsx";
 import './navbar.css'
+import NavbarHeader from "../components/NavbarHeader.jsx";
+import AttestationCongeForm from "../components/AttestationCongeForm";
+import Modal from "../components/Modal";
+
+
 
 function CompanyEmploye() {
   const [employee, setEmployee] = useState({});
+  const [openForm, setOpenForm] = useState(false);
+  const [historyUploads, setHistoryUploads] = useState([]);
   const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     api
       .get(`/companyEmploye/${id}`)
-      .then((res) => setEmployee(res.data[0]))
+      .then((res) =>{ 
+        setEmployee(res.data.employee)
+        setHistoryUploads(res.data.certificates)})
       .catch(console.error);
-      console.log(employee);
+      console.log(historyUploads);
       
   }, [id]);
-  const handleGenerate = async (id) => {
+  const handleGenerateTravaille = async (id) => {
   const res = await api.post(
     `/generate/${id}`,
-    {},
+    {type: "attestation de travaille"},
     { responseType: "blob" } // 🔥 IMPORTANT
   );
 
@@ -40,22 +48,11 @@ function CompanyEmploye() {
   window.URL.revokeObjectURL(url);
 };
 
+
   return (
     <>
       {/* HEADER */}
-      <header className="header">
-      <div className="nav-container">
-        <div className="logo">
-          <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
-          <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
-          <button className="btn">GENERATE</button>
-          <button className="btn">DOCUMENTS</button>
-          <button className="btn">DEPARTMENTS</button>
-          <button className="btn">SETTINGS</button>
-        </div>
-        <SearchInput />
-      </div>
-    </header>
+      <NavbarHeader />
 
       {/* MAIN */}
       <main>
@@ -78,31 +75,44 @@ function CompanyEmploye() {
               <div className={styles.infoRow}><span>Department</span><strong>{employee.departement_nom}</strong></div>
               <div className={styles.infoRow}><span>City</span><strong>{employee.nom_ville}</strong></div>
 
-              <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => handleGenerate(employee.employee_id)}>
-                Generate Work Certificate (PDF)
+              <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => handleGenerateTravaille(employee.employee_id)}>
+                attestation de travaille (PDF)
               </button>
-              <button className={`${styles.btn} ${styles.btnSecondary}`}>
-                Generate Administrative Certificate
+              <button
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                  onClick={() => setOpenForm(true)}
+                >
+                  Gestion des licences administratives (PDF)
               </button>
+
             </div>
           </div>
 
           {/* RIGHT */}
           <div className={styles.card}>
             <h3 style={{ marginBottom: "15px" }}>Generated Documents</h3>
+            {!historyUploads ? <span>no file found </span> : 
+              historyUploads.map((p)=> (
+                <div className={styles.historyItem}>
+                  <span>{p.certificate_type}</span>
+                  <span>{p.uploaded_at.split("T")[0]}</span>
+                </div>
+              ))
+            }
+            
+            
 
-            <div className={styles.historyItem}>
-              <span>Work Certificate</span>
-              <span>10 Jan 2025</span>
-            </div>
-
-            <div className={styles.historyItem}>
-              <span>Administrative Certificate</span>
-              <span>03 Nov 2024</span>
-            </div>
           </div>
         </section>
       </main>
+      <Modal open={openForm} onClose={() => setOpenForm(false)}>
+        <AttestationCongeForm
+          employeeId={employee.employee_id}
+          onClose={() => setOpenForm(false)}
+        />
+      </Modal>
+
+
     </>
   );
 }

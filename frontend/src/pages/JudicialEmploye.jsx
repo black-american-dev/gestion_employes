@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api/api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styles from "./Employe.module.css";
 import SearchInput from "../components/SearchInput.jsx";
 import './navbar.css'
+import NavbarHeader from "../components/NavbarHeader.jsx";
 
 function JudicialEmploye() {
   const [employee, setEmployee] = useState({});
   const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -42,19 +42,7 @@ function JudicialEmploye() {
   return (
     <>
       {/* HEADER */}
-      <header className="header">
-      <div className="nav-container">
-        <div className="logo">
-          <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
-          <button className="btn" onClick={()=> navigate("/addEmploye")}>EMPLOYEES</button>
-          <button className="btn">GENERATE</button>
-          <button className="btn">DOCUMENTS</button>
-          <button className="btn">DEPARTMENTS</button>
-          <button className="btn">SETTINGS</button>
-        </div>
-        <SearchInput />
-      </div>
-    </header>
+      <NavbarHeader />
 
       {/* MAIN */}
       <main>
