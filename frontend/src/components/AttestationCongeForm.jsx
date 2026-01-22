@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./EmployeeForm.css"; // reuse SAME styles
+import "./EmployeeForm.css"; 
 import { api } from "../api/api";
 
 function AttestationCongeForm({ employeeId, onClose }) {

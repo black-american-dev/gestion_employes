@@ -7,6 +7,7 @@ import AddEmployee from './pages/AddEmployee'
 import AnnualAbsence from './pages/AnnualAbsence'
 import EmployeePage from './pages/EmployeePage'
 import Documents from './pages/Documents'
+import GeneratedPage from './pages/GeneratedPage'
 function App() {
 
 
@@ -20,6 +21,7 @@ function App() {
         <Route path='/employeePage' element={<EmployeePage />} />
         <Route path='/anualAbsence' element={<AnnualAbsence />} />
         <Route path='/documents' element={<Documents />} />
+        <Route path='/generate' element={<GeneratedPage />} />
       </Routes>
     </BrowserRouter>
   )

@@ -17,10 +17,17 @@ function AnnualAbsence() {
 
   const years = [2026, 2025, 2024]; // ✅ define years
 
+    const fetchAnnualAbsences = async () => {
+    try {
+      const res = await api.get("/annual-absence");
+      setJudicialEmployees(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    api.get("/annual-absence")
-      .then((res) => setJudicialEmployees(res.data))
-      .catch((error) => console.error(error));
+    fetchAnnualAbsences();
   }, []);
 
   const filteredJudicialEmployees =
@@ -29,6 +36,32 @@ function AnnualAbsence() {
       : judicialEmployees.filter(
           (emp) => emp.year === judicialFilter
         );
+
+    const downloadExcel = async () => {
+      try {
+        const res = await api.get(
+          `/annual-absence/export?year=${judicialFilter}`,
+          { responseType: "blob" }
+        );
+
+        const blob = new Blob([res.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `annual_absences_${judicialFilter}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download failed", error);
+      }
+    };
+
 
   return (
     <>
@@ -87,9 +120,28 @@ function AnnualAbsence() {
             ))}
           </div>
           <div>
-             {judicialFilter !== null && (
+            {judicialFilter !== null && (
             <div>
-              <TableAnuual emp={filteredJudicialEmployees} />
+              <TableAnuual
+                emp={filteredJudicialEmployees}
+                refresh={fetchAnnualAbsences}
+              />
+              <div
+                style={{
+                  maxWidth: "1200px",
+                  margin: "16px auto 24px auto",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <button
+                  className="btn btnSecondary"
+                  disabled={judicialFilter === null}
+                  onClick={downloadExcel}
+                >
+                  Download Excel
+                </button>
+              </div>
             </div>
           )}
             

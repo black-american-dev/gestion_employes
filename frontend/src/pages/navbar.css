@@ -23,6 +23,9 @@
   font-weight: 300;
   opacity: 0.8;
 }
+.logo:hover {
+  cursor: pointer;
+}
 .toolbar {
   max-width: 1200px;
   margin: 20px auto 0;
@@ -34,7 +37,7 @@
 
 .btn {
     padding: 12px 10px 12px 10px;
-    width: 150px;
+    width: 170px;
     border-radius: 30px;
     border: none;
     font-size: 14px;

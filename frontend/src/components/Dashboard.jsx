@@ -18,7 +18,8 @@ function Dashboard() {
                     borderRadius: "30px",
                     fontSize: "14px",
                     cursor: "pointer",
-                    }} id="quickGenerateBtn">
+                    }} id="quickGenerateBtn" 
+                    onClick={()=> navigate("/generate")}>
                     <i className="fas fa-file-pdf"></i> Quick Generate
                 </button>
                 <button className="btn btnSecondary">

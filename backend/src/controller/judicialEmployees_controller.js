@@ -27,10 +27,14 @@ export const getJudicialEmployeById = async (req,res)=>{
       SELECT employee_id,cin,nom,prenom,cadre_actuel,department,nom_ville,status,hire_date,entity_type FROM judicial_employees 
       join judicial_entities on judicial_employees.judicial_entity_id = judicial_entities.id WHERE employee_id = ?
       `,[emp_id])
+    const [certificatesRows] = await db.query("SELECT * FROM certificates where employee_id = ?",[emp_id])
     if(row.length === 0) {
         return res.status(401).json({message: `employe with this ${emp_id} is not found`})
     }
-    res.status(200).json(row)
+    res.status(200).json({
+    employee: row[0],
+    certificates: certificatesRows,
+  })
 }
 export const getJudicialEmployeByName = async (req,res)=>{
     const nom = req.body.nom

@@ -1,17 +1,16 @@
-import fs from 'fs';
-import path from 'path';
-import { PDFDocument } from 'pdf-lib';
-import db from '../db/config.js';
-
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
+import db from "../db/config.js";
 import { fileURLToPath } from "url";
 
 export const generateJudicialAttestation = async (req, res) => {
   try {
-    const employeeId = req.params.id;
+    const employeeId = req.params.id
+    const type = req.body.type
 
-    // 1️⃣ Fetch employee
     const [rows] = await db.query(
-      `
+        `
    SELECT 
       judicial_employees.judicial_entity_id,
       judicial_entities.entity_type,
@@ -29,80 +28,82 @@ export const generateJudicialAttestation = async (req, res) => {
       ON judicial_employees.judicial_entity_id = judicial_entities.id
   WHERE employee_id = ?`,
       [employeeId]
-    );
+    )
 
     if (!rows.length) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found"
-      });
+      return res.status(404).json({ message: "Employee not found" })
     }
 
-    const emp = rows[0];
-
-    // 2️⃣ Load PDF template
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// ✅ SAFE, RELATIVE, ELECTRON-PROOF
-const templatePath = path.join(
-  __dirname,
-  "..",
-  "templates",
-  "ATTESTATION DE TRAVAIL temp (1).pdf"
-);
+    const emp = rows[0]
 
 
-    const pdfBytes = fs.readFileSync(templatePath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    const form = pdfDoc.getForm();
+    const fullName = `${emp.nom} ${emp.prenom}`
+    const grade = emp.cadre_actuel
+    const employe_id = String(emp.employee_id)
+    const cin = emp.cin
+    const date = new Date().toLocaleDateString("fr-FR")
 
-    // 3️⃣ Fill PDF fields (MUST MATCH DOCFLY)
-    form.getTextField('fullName')
-      .setText(`${emp.nom} ${emp.prenom}`);
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
 
-    form.getTextField('grade')
-      .setText(emp.nom_ville);
+    const templatePath = path.join(
+      __dirname,
+      "..",
+      "templates",
+      "ATTESTATION DE TRAVAIL temp (1).jpg"
+    )
 
-    form.getTextField('employe_id')
-      .setText(String(emp.employee_id));
+    const fontPath = path.join(
+      __dirname,
+      "..",
+      "fonts",
+      "Amiri-Regular.ttf"
+    )
 
-    form.getTextField('cin')
-      .setText(emp.cin);
+    const fileName = `${employeeId}_judicial_attestation_${Date.now()}.pdf`
+    const generatedDir = path.join(__dirname, "..", "generated")
+    const filePath = path.join(generatedDir, fileName)
 
-    form.getTextField('date')
-      .setText(new Date().toLocaleDateString('fr-FR'));
+    if (!fs.existsSync(generatedDir)) {
+      fs.mkdirSync(generatedDir, { recursive: true })
+    }
 
-    // 4️⃣ Flatten (VERY IMPORTANT)
-    form.flatten();
+    const doc = new PDFDocument({ size: "A4", margin: 0 })
 
-    // 5️⃣ Save PDF
-    const outputPdf = await pdfDoc.save();
+    res.setHeader("Content-Type", "application/pdf")
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${fileName}"`
+    )
 
-    const outputPath = path.join(
-      process.cwd(),
-      'src',
-      'generated',
-      `${employeeId}_attestation.pdf`
-    );
+    const fileStream = fs.createWriteStream(filePath)
+    doc.pipe(fileStream)
+    doc.pipe(res)
 
-    fs.writeFileSync(outputPath, outputPdf);
+    doc.image(templatePath, 0, 0, { width: 595, height: 842 })
+    doc.font(fontPath).fontSize(12)
 
-    // 6️⃣ RESPOND TO CLIENT
-    res.setHeader("Content-Type", "application/pdf");
-res.setHeader(
-  "Content-Disposition",
-  `attachment; filename="${employeeId}_attestation.pdf"`
-);
+    doc.text(fullName, 60, 375, { width: 180, align: "right" })
+    doc.text(grade, 60, 405, { width: 180, align: "right" })
+    doc.text(employe_id, 60, 435, { width: 180, align: "right" })
+    doc.text(cin, 60, 465, { width: 180, align: "right" })
+    doc.text(date, 205, 695, { width: 180, align: "right" })
 
-return res.send(outputPdf);
+    doc.end()
 
+    fileStream.on("finish", async () => {
+      await db.query(
+        `
+        INSERT INTO certificates 
+        (certificate_type, file_name, employee_id)
+        VALUES (?, ?, ?)
+        `,
+        [type, fileName, employeeId]
+      )
+    })
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "PDF generation failed"
-    });
+    console.error(error)
+    res.status(500).json({ message: "PDF generation failed" })
   }
 };

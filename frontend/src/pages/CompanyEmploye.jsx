@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api/api.js";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Employe.module.css";
-import SearchInput from "../components/SearchInput.jsx";
 import './navbar.css'
 import NavbarHeader from "../components/NavbarHeader.jsx";
-import AttestationCongeForm from "../components/AttestationCongeForm";
 import Modal from "../components/Modal";
+import AttestationCongeForm from "../components/AttestationCongeForm";
+
+import DeleteButton from "../components/DeleteButton.jsx";
 
 
 
@@ -15,6 +16,8 @@ function CompanyEmploye() {
   const [openForm, setOpenForm] = useState(false);
   const [historyUploads, setHistoryUploads] = useState([]);
   const { id } = useParams();
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     api
@@ -26,6 +29,18 @@ function CompanyEmploye() {
       console.log(historyUploads);
       
   }, [id]);
+ const handleDelete = async () => {
+    try {
+      await api.delete(`/companyEmploye/${id}`).then(res => console.log(res.data)
+      )
+      alert("Employee deleted successfully");
+      navigate("/")
+    } catch (err) {
+      console.error(err);
+      alert("Delete failed");
+    }
+  };
+  
   const handleGenerateTravaille = async (id) => {
   const res = await api.post(
     `/generate/${id}`,
@@ -87,21 +102,29 @@ function CompanyEmploye() {
 
             </div>
           </div>
+          
 
           {/* RIGHT */}
           <div className={styles.card}>
             <h3 style={{ marginBottom: "15px" }}>Generated Documents</h3>
-            {!historyUploads ? <span>no file found </span> : 
-              historyUploads.map((p)=> (
+            {historyUploads.length === 0 ? (
+              <span>No file found</span>
+              ) : (
+                historyUploads.map((p)=> (
                 <div className={styles.historyItem}>
                   <span>{p.certificate_type}</span>
                   <span>{p.uploaded_at.split("T")[0]}</span>
                 </div>
               ))
-            }
-            
-            
-
+              )}
+          </div>
+          <div className={styles.card}>
+            <h1 className={styles.heroTitle}>
+              Delete <span>This employee !</span>
+            </h1>
+              <div onClick={handleDelete}>
+                <DeleteButton />
+              </div>
           </div>
         </section>
       </main>

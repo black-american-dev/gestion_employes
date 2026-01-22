@@ -33,7 +33,7 @@ export const getCompanyEmployeById = async (req,res)=>{
     }
     res.status(200).json({
     employee: row[0],
-    certificates: certificatesRows, // [] if empty (perfect)
+    certificates: certificatesRows,
   })
 }
 export const getCompanyEmployeByName = async (req, res) => {

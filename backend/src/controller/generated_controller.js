@@ -6,10 +6,10 @@ import { fileURLToPath } from "url";
 
 export const generateAttestation = async (req, res) => {
   try {
-    const employeeId = req.params.id;
-    const type = req.body.type; // example: "ATTESTATION_TRAVAIL"
+    const employeeId = req.params.id
+    const type = req.body.type
 
-    // 1️⃣ Fetch employee
+
     const [rows] = await db.query(
       "SELECT * FROM company_employees WHERE employee_id = ?",
       [employeeId]
@@ -19,71 +19,62 @@ export const generateAttestation = async (req, res) => {
       return res.status(404).json({ message: "Employee not found" });
     }
 
-    const emp = rows[0];
+    const emp = rows[0]
 
-    // 2️⃣ SAME FIELD NAMES
-    const fullName = `${emp.nom} ${emp.prenom}`;
-    const grade = emp.cadre_actuel;
-    const employe_id = String(emp.employee_id);
-    const cin = emp.cin;
-    const date = new Date().toLocaleDateString("fr-FR");
+    const fullName = `${emp.nom} ${emp.prenom}`
+    const grade = emp.cadre_actuel
+    const employe_id = String(emp.employee_id)
+    const cin = emp.cin
+    const date = new Date().toLocaleDateString("fr-FR")
 
-    // 3️⃣ Paths
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
 
     const templatePath = path.join(
       __dirname,
       "..",
       "templates",
       "ATTESTATION DE TRAVAIL temp (1).jpg"
-    );
+    )
 
     const fontPath = path.join(
       __dirname,
       "..",
       "fonts",
       "Amiri-Regular.ttf"
-    );
+    )
 
-    // 4️⃣ Output file info
-    const fileName = `${employeeId}_attestation_${Date.now()}.pdf`;
-    const generatedDir = path.join(__dirname, "..", "generated");
-    const filePath = path.join(generatedDir, fileName);
+    const fileName = `${employeeId}_attestation_${Date.now()}.pdf`
+    const generatedDir = path.join(__dirname, "..", "generated")
+    const filePath = path.join(generatedDir, fileName)
 
-    // Ensure folder exists
     if (!fs.existsSync(generatedDir)) {
-      fs.mkdirSync(generatedDir, { recursive: true });
+      fs.mkdirSync(generatedDir, { recursive: true })
     }
 
-    // 5️⃣ Create PDF
-    const doc = new PDFDocument({ size: "A4", margin: 0 });
+    const doc = new PDFDocument({ size: "A4", margin: 0 })
 
-    // Download headers
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Type", "application/pdf")
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${fileName}"`
     );
 
-    // 6️⃣ Streams (IMPORTANT)
-    const fileStream = fs.createWriteStream(filePath);
-    doc.pipe(fileStream); // save to disk
-    doc.pipe(res);        // download
+    const fileStream = fs.createWriteStream(filePath)
+    doc.pipe(fileStream)
+    doc.pipe(res)
 
-    // 7️⃣ Template + text
-    doc.image(templatePath, 0, 0, { width: 595, height: 842 });
-    doc.font(fontPath).fontSize(12);
+    doc.image(templatePath, 0, 0, { width: 595, height: 842 })
+    doc.font(fontPath).fontSize(12)
 
-    doc.text(fullName, 60, 375, { width: 180, align: "right" });
-    doc.text(grade, 60, 405, { width: 180, align: "right" });
-    doc.text(employe_id, 60, 435, { width: 180, align: "right" });
-    doc.text(cin, 60, 465, { width: 180, align: "right" });
-    doc.text(date, 205, 695, { width: 180, align: "right" });
+    doc.text(fullName, 60, 375, { width: 180, align: "right" })
+    doc.text(grade, 60, 405, { width: 180, align: "right" })
+    doc.text(employe_id, 60, 435, { width: 180, align: "right" })
+    doc.text(cin, 60, 465, { width: 180, align: "right" })
+    doc.text(date, 205, 695, { width: 180, align: "right" })
 
-    doc.end();
+    doc.end()
 
-    // 8️⃣ Insert into history AFTER file is saved
     fileStream.on("finish", async () => {
       await db.query(
         `
@@ -92,11 +83,11 @@ export const generateAttestation = async (req, res) => {
         VALUES (?, ?, ?)
         `,
         [type, fileName, employeeId]
-      );
-    });
+      )
+    })
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "PDF generation failed" });
+    console.error(error)
+    res.status(500).json({ message: "PDF generation failed" })
   }
 };

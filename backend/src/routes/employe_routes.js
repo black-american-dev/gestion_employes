@@ -12,7 +12,7 @@ import {getJudicialEmployes,
     deleteJudicialEmploye} 
     from "../controller/judicialEmployees_controller.js"
 import { generateAttestation } from "../controller/generated_controller.js"
-import { getAnnualAbsent, importAnnualAbsence } from "../controller/annualAbsence_controller.js"
+import { exportAnnualAbsencesToExcel, getAnnualAbsent, importAnnualAbsence, updateAnnualAbsenceCell } from "../controller/annualAbsence_controller.js"
 import uploadExcel from "../middelwares/uploadExcel.js"
 import { generateJudicialAttestation } from "../controller/generatedJudicial_controller.js"
 import { globalSearch } from "../controller/search_controller.js"
@@ -41,6 +41,9 @@ router.post("/generateJudicial/:id" , generateJudicialAttestation)
 // annual absences :
 router.post("/annual-absence/import", uploadExcel.single("file"), importAnnualAbsence)
 router.get("/annual-absence", getAnnualAbsent)
+router.put("/annual-absence/:id", updateAnnualAbsenceCell)
+router.get("/annual-absence/export", exportAnnualAbsencesToExcel)
+
 // search employes :
 router.post("/search", globalSearch);
 // Documents :

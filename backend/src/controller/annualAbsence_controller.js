@@ -13,19 +13,6 @@ export const importAnnualAbsence = async (req, res) => {
   }
 
   try {
-    // 1️⃣ Prevent duplicate year
-    const [existing] = await db.query(
-      "SELECT id FROM annual_absence_imports WHERE year = ?",
-      [year]
-    );
-
-    if (existing.length) {
-      return res.status(409).json({
-        message: "This year is already imported"
-      });
-    }
-
-    // 2️⃣ Save import history
     const [importResult] = await db.query(
       `INSERT INTO annual_absence_imports (year, file_name)
        VALUES (?, ?)`,
@@ -34,14 +21,12 @@ export const importAnnualAbsence = async (req, res) => {
 
     const importId = importResult.insertId;
 
-    // 3️⃣ Read Excel
     const workbook = XLSX.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
 
     const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
-    // 4️⃣ Insert rows
     for (const row of rows) {
       await db.query(
         `INSERT INTO annual_absences (
@@ -52,8 +37,10 @@ export const importAnnualAbsence = async (req, res) => {
           cadre_actuel,
           nom,
           prenom,
-          departement
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          fullName,
+          departement,
+          situation
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           importId,
           year,
@@ -62,7 +49,9 @@ export const importAnnualAbsence = async (req, res) => {
           row.cadre_actuel,
           row.nom,
           row.prenom,
-          row.departement
+          row.fullName,
+          row.departement,
+          row.situation
         ]
       );
     }
@@ -90,3 +79,77 @@ export const getAnnualAbsent = async (req,res) => {
   `)
     res.status(200).json(rows)
 }
+
+export const updateAnnualAbsenceCell = async (req, res) => {
+  const { id } = req.params;
+  const { field, value } = req.body;
+
+  const allowedFields = [
+    "cin",
+    "nom",
+    "prenom",
+    "fullName",
+    "cadre_actuel",
+    "departement",
+    "situation"
+  ];
+
+  if (!allowedFields.includes(field)) {
+    return res.status(400).json({ message: "Invalid field" });
+  }
+
+  try {
+    await db.query(
+      `UPDATE annual_absences SET ${field} = ? WHERE id = ?`,
+      [value, id]
+    );
+    res.json({ message: "Updated" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+export const exportAnnualAbsencesToExcel = async (req, res) => {
+  const { year } = req.query;
+
+  try {
+    let query = "SELECT * FROM annual_absences";
+    let params = [];
+
+    if (year) {
+      query += " WHERE year = ?";
+      params.push(year);
+    }
+
+    const [rows] = await db.query(query, params);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No data to export" });
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "AnnualAbsences");
+
+    const buffer = XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=annual_absences_${year || "all"}.xlsx`
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.send(buffer);
+
+  } catch (error) {
+    console.error("EXPORT ERROR:", error);
+    res.status(500).json({ message: "Export failed", error: error.message });
+  }
+};

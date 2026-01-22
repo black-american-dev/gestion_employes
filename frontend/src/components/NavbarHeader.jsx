@@ -10,11 +10,13 @@ function NavbarHeader() {
       <div className="nav-container">
         <div className="logo">
           <p onClick={()=> navigate("/")}>HR<span>Docs</span></p>
-          <button className="btn" onClick={()=> navigate("/employeePage")}>EMPLOYEES</button>
-          <button className="btn">GENERATE</button>
-          <button className="btn" onClick={() => navigate("/documents")}>DOCUMENTS</button>
-          <button className="btn" onClick={() => navigate("/anualAbsence")}>ANNUAL ABCENCE</button>
-          <button className="btn">SETTINGS</button>
+          <button className="btn" onClick={()=> navigate("/employeePage")}>Employee</button>
+          <button className="btn" onClick={()=> navigate("/generate")}>Generate</button>
+          <button className="btn" onClick={() => navigate("/documents")}>Documents</button>
+          <button className="btn" onClick={() => navigate("/anualAbsence")}>Annual absence</button>
+          <button className="btn" onClick={()=> navigate("/addEmploye")}>
+                     Add Employee
+                </button>
         </div>
         <SearchInput />
       </div>
