@@ -1,10 +1,14 @@
-import mysql from "mysql2/promise"
+import mysql from "mysql2/promise";
 
-const pool = mysql.createPool({
-    host : "localhost",
-    user : "root",
-    password: "Habib2006",
-    database: "hr_system"
-})
+const db = mysql.createPool({
+  host: "nozomi.proxy.rlwy.net",
+  user: "root",
+  password: "CLosJAvWzkzzoGwDPjPgSWwgItQtWXkM",
+  database: "hr_system",
+  port: 36644,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-export default pool;
+export default db;

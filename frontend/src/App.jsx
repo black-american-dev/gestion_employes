@@ -1,5 +1,5 @@
 import './App.css'
-import {BrowserRouter,Routes,Route} from "react-router-dom"
+import { HashRouter, Routes, Route } from "react-router-dom"
 import Home from './pages/Home'
 import CompanyEmploye from './pages/CompanyEmploye'
 import JudicialEmploye from './pages/JudicialEmploye'
@@ -8,11 +8,10 @@ import AnnualAbsence from './pages/AnnualAbsence'
 import EmployeePage from './pages/EmployeePage'
 import Documents from './pages/Documents'
 import GeneratedPage from './pages/GeneratedPage'
+
 function App() {
-
-
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/companyEmploye/:id' element={<CompanyEmploye />} />
@@ -23,7 +22,7 @@ function App() {
         <Route path='/documents' element={<Documents />} />
         <Route path='/generate' element={<GeneratedPage />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
