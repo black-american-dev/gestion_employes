@@ -33,11 +33,11 @@
       "node_modules/**/*",
       "package.json"
     ],
-    "win": {
-      "target": "nsis"
-    },
-    "directories": {
-      "output": "release"
-    }
+    "asarUnpack": [
+      "backend/src/templates/**",
+      "backend/src/fonts/**"
+    ],
+    "win": { "target": "nsis" },
+    "directories": { "output": "release" }
   }
 }

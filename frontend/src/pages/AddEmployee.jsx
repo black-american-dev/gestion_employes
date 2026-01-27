@@ -2,23 +2,15 @@ import React, { useState } from "react";
 import EmployeeForm from "../components/EmployeeForm";
 import Button from "../components/ArrowButton";
 import "./navbar.css"
-import { useNavigate } from "react-router-dom";
 import JudicialEmployeeForm from "../components/JudicialEmployeeForm";
 import NavbarHeader from "../components/NavbarHeader";
 
 function AddEmployee() {
   const [companyEmp, setCompanyEmp] = useState(false)
   const [judicialEmp, setJudicialEmp] = useState(false)
-  const navigate = useNavigate()
   return (
     <>
       <NavbarHeader />
-      <div style={{display: "flex", gap: "20px",maxWidth: "1500px", margin: "auto",alignItems: "center",}}>
-        <Button onClick={()=> navigate(-1)}/>
-        <h1 className="logo">
-          <p onClick={()=> navigate("/")}>Employee<span>Details</span></p>
-        </h1>
-      </div>
       <div className="form-wrapper">
       <div className="form-card" style={{marginRight: "5px"}}>
         <h1>Company employee</h1>

@@ -1,31 +1,39 @@
-import XLSX from "xlsx";
-import db from "../db/config.js";
+import XLSX from "xlsx"
+import fs from "fs"
+import path from "path"
+import db from "../db/config.js"
+import { getAnnualAbsencesDir } from "../utils/storage.js"
 
 export const importAnnualAbsence = async (req, res) => {
-  const { year } = req.body;
+  const { year } = req.body
 
   if (!year) {
-    return res.status(400).json({ message: "Year is required" });
+    return res.status(400).json({ message: "Year is required" })
   }
 
   if (!req.file) {
-    return res.status(400).json({ message: "Excel file is required" });
+    return res.status(400).json({ message: "Excel file is required" })
   }
 
   try {
+    // ✅ FORCE correct path (do NOT trust req.file.path blindly)
+    const annualDir = getAnnualAbsencesDir()
+    const filePath = path.join(annualDir, req.file.filename)
+
+    // Insert import record
     const [importResult] = await db.query(
       `INSERT INTO annual_absence_imports (year, file_name)
        VALUES (?, ?)`,
       [year, req.file.filename]
-    );
+    )
 
-    const importId = importResult.insertId;
+    const importId = importResult.insertId
 
-    const workbook = XLSX.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+    // ✅ Read Excel from SAFE path
+    const workbook = XLSX.readFile(filePath)
+    const sheetName = workbook.SheetNames[0]
+    const sheet = workbook.Sheets[sheetName]
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" })
 
     for (const row of rows) {
       await db.query(
@@ -53,23 +61,25 @@ export const importAnnualAbsence = async (req, res) => {
           row.departement,
           row.situation
         ]
-      );
+      )
     }
 
     res.json({
       message: "Annual absence imported successfully",
       year,
       totalRows: rows.length
-    });
+    })
+    console.log("multer saved:", req.file.path);
+console.log("controller reads:", filePath);
 
   } catch (error) {
-    console.error(error);
+    console.error(error)
     res.status(500).json({
       message: "Import failed",
       error: error.message
-    });
+    })
   }
-};
+}
 
 
 export const getAnnualAbsent = async (req,res) => {
@@ -151,5 +161,23 @@ export const exportAnnualAbsencesToExcel = async (req, res) => {
   } catch (error) {
     console.error("EXPORT ERROR:", error);
     res.status(500).json({ message: "Export failed", error: error.message });
+  }
+};
+
+export const getAnnualAbsenceYears = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT DISTINCT year
+      FROM annual_absences
+      ORDER BY year DESC
+    `);
+
+    // convert [{year: 2026}, {year: 2025}] → [2026, 2025]
+    const years = rows.map((r) => r.year);
+
+    res.json(years);
+  } catch (error) {
+    console.error("Error fetching years:", error);
+    res.status(500).json({ message: "Failed to fetch years" });
   }
 };

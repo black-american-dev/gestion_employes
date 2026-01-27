@@ -46,19 +46,8 @@ export const generateJudicialAttestation = async (req, res) => {
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = path.dirname(__filename)
 
-    const templatePath = path.join(
-      __dirname,
-      "..",
-      "templates",
-      "ATTESTATION DE TRAVAIL temp (1).jpg"
-    )
 
-    const fontPath = path.join(
-      __dirname,
-      "..",
-      "fonts",
-      "Amiri-Regular.ttf"
-    )
+
 
     const fileName = `${employeeId}_judicial_attestation_${Date.now()}.pdf`
     const generatedDir = path.join(__dirname, "..", "generated")

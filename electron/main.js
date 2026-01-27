@@ -7,7 +7,6 @@ const USER_DATA_DIR = app.getPath('userData')
 const UPLOADS_DIR = path.join(USER_DATA_DIR, 'uploads')
 
 // make sure it exists
-const fs = require('fs')
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 }
@@ -15,6 +14,7 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 // expose to backend
 process.env.USER_DATA_DIR = USER_DATA_DIR
 process.env.UPLOADS_DIR = UPLOADS_DIR
+process.env.ASSETS_DIR = path.join(process.resourcesPath, "backend", "src");
 
 let mainWindow;
 

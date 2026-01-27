@@ -9,6 +9,7 @@ const [form, setForm] = useState({
     cin: "",
     nom: "",
     prenom: "",
+    telephone: "+212",
     cadre_actuel: "",
     judicial_entity_id: "",
     department: "",
@@ -79,6 +80,16 @@ const [form, setForm] = useState({
               <input
                 name="prenom"
                 value={form.prenom}
+                onChange={handleChange}
+                placeholder="First name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>telephone</label>
+              <input
+                name="telephone"
+                value={form.telephone}
                 onChange={handleChange}
                 placeholder="First name"
               />

@@ -9,6 +9,7 @@ export const getJudicialEmployes = async (req,res)=>{
       cin,
       nom,
       prenom,
+      telephone,
       cadre_actuel,
       department,
       nom_ville,
@@ -24,7 +25,7 @@ export const getJudicialEmployeById = async (req,res)=>{
     const emp_id = req.params.id
     
     const [row] = await db.query(`
-      SELECT employee_id,cin,nom,prenom,cadre_actuel,department,nom_ville,status,hire_date,entity_type FROM judicial_employees 
+      SELECT employee_id,cin,nom,prenom,telephone,cadre_actuel,department,nom_ville,status,hire_date,entity_type FROM judicial_employees 
       join judicial_entities on judicial_employees.judicial_entity_id = judicial_entities.id WHERE employee_id = ?
       `,[emp_id])
     const [certificatesRows] = await db.query("SELECT * FROM certificates where employee_id = ?",[emp_id])
@@ -41,7 +42,7 @@ export const getJudicialEmployeByName = async (req,res)=>{
     const prenom = req.body.prenom
 
     const [row] = await db.query(`
-      SELECT employee_id,cin,nom,prenom,cadre_actuel,department,nom_ville,status,hire_date,entity_type FROM judicial_employees 
+      SELECT employee_id,cin,nom,prenom,telephone,cadre_actuel,department,nom_ville,status,hire_date,entity_type FROM judicial_employees 
       join judicial_entities on judicial_employees.judicial_entity_id = judicial_entities.id WHERE nom = ? or prenom = ?
       `,[nom,prenom])
     if(row.length === 0) {
@@ -55,6 +56,7 @@ export const postJudicialEmploye = async (req, res) => {
     cin,
     nom,
     prenom,
+    telephone,
     cadre_actuel,
     judicial_entity_id,   
     department,    
@@ -62,7 +64,7 @@ export const postJudicialEmploye = async (req, res) => {
     date_embauche
   } = req.body;
 
-  if (!employe_id || !cin || !nom || !prenom || !cadre_actuel || !judicial_entity_id || !department || !statut || !date_embauche ) {
+  if (!employe_id || !cin || !nom || !prenom || !telephone || !cadre_actuel || !judicial_entity_id || !department || !statut || !date_embauche ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -77,22 +79,24 @@ export const postJudicialEmploye = async (req, res) => {
     });
   }
 
-  await db.query(
-    `INSERT INTO judicial_employees 
-    (employee_id, cin, nom, prenom, cadre_actuel, judicial_entity_id, department, status, hire_date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      employe_id,
-      cin,
-      nom,
-      prenom,
-      cadre_actuel,
-      judicial_entity_id,   
-      department,    
-      statut,
-      date_embauche
-    ]
-  );
+await db.query(
+  `INSERT INTO judicial_employees 
+   (employee_id, cin, nom, prenom, telephone, cadre_actuel, judicial_entity_id, department, status, hire_date)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    employe_id,
+    cin,
+    nom,
+    prenom,
+    telephone,
+    cadre_actuel,
+    judicial_entity_id,
+    department,
+    statut,
+    date_embauche
+  ]
+);
+
 
 
   res.status(201).json({ message: "Employee added successfully" });

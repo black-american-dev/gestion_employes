@@ -15,6 +15,7 @@ function Table(props) {
           <th>CIN</th>
           <th>Nom</th>
           <th>Prénom</th>
+          <th>Telephone</th>
           <th>Cadre actuel</th>
           <th>Ville</th>
           <th>Departement name</th>
@@ -30,6 +31,7 @@ function Table(props) {
             <td>{emp.cin}</td>
             <td>{emp.nom}</td>
             <td>{emp.prenom}</td>
+            <td>{emp.telephone}</td>
             <td>{emp.cadre_actuel}</td>
             <td>{emp.nom_ville}</td>
             <td>{emp.entity_type}</td>

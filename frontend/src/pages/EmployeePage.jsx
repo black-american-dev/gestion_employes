@@ -13,8 +13,6 @@ function EmployeePage() {
 
       const [companyFilter, setCompanyFilter] = useState(0);
       const [judicialFilter, setJudicialFilter] = useState(0);
-
-      const [cityFilter, setCityFilter] = useState("all");
       const [judicialCityFilter, setJudicialCityFilter] = useState("all");
 
       const [departement, setDepartement] = useState("all");
@@ -36,7 +34,7 @@ function EmployeePage() {
 
     const cityOptions = [
       { label: "All Cities", value: "all" },
-      { label: "laayoune", value: "laayoune" },
+      { label: "Laayoune", value: "Laayoune" },
       { label: "Smara", value: "Smara" },
       { label: "Boujdour", value: "Boujdour" },
       { label: "Dakhla", value: "Dakhla" },
@@ -50,12 +48,8 @@ function EmployeePage() {
     // company employee : 
     const filteredCompanyEmployees = employees.filter(emp => {
       const departmentMatch =
-        companyFilter === 0 || Number(emp.departement_id) === companyFilter;
-
-      const cityMatch =
-        cityFilter === "all" || emp.nom_ville === cityFilter;
-
-      return departmentMatch && cityMatch;
+        companyFilter === 0 || Number(emp.departement_id) === companyFilter
+      return departmentMatch 
     });
 
     // judicial employee : 
@@ -91,7 +85,6 @@ function EmployeePage() {
     
     <div className="toolbar">
       <DropDown options={options} onChange={setCompanyFilter} />
-      <DropDown options={cityOptions} onChange={setCityFilter} />
     </div>
     <div>
       <Table emp={filteredCompanyEmployees} />

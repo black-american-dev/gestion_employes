@@ -9,6 +9,7 @@ export const getCompanyEmployes = async (req,res)=>{
       cin,
       nom,
       prenom,
+      telephone,
       cadre_actuel,
       nom_ville,
       status,
@@ -23,7 +24,7 @@ export const getCompanyEmployeById = async (req,res)=>{
     const emp_id = req.params.id
     
     const [row] = await db.query(`
-      SELECT employee_id,cin,nom,prenom,cadre_actuel,nom_ville,status,hire_date,departement_nom FROM company_employees 
+      SELECT employee_id,cin,nom,prenom,telephone,cadre_actuel,nom_ville,status,hire_date,departement_nom FROM company_employees 
       join departements on company_employees.departement_id = departements.id WHERE employee_id = ?
       `,[emp_id])
     
@@ -52,6 +53,7 @@ export const getCompanyEmployeByName = async (req, res) => {
       cin,
       nom,
       prenom,
+      telephone,
       cadre_actuel,
       nom_ville,
       status,
@@ -80,6 +82,7 @@ export const postCompanyEmploye = async (req, res) => {
     cin,
     nom,
     prenom,
+    telephone,
     cadre_actuel,
     ville,
     departement,
@@ -87,7 +90,7 @@ export const postCompanyEmploye = async (req, res) => {
     statut,
   } = req.body;
 
-  if (!employe_id || !cin || !nom || !prenom || !cadre_actuel || !ville || !departement || !date_embauche || !statut) {
+  if (!employe_id || !cin || !nom || !prenom || !telephone || !cadre_actuel || !ville || !departement || !date_embauche || !statut) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -102,15 +105,16 @@ export const postCompanyEmploye = async (req, res) => {
     });
   }
 
-  await db.query(
+await db.query(
   `INSERT INTO company_employees 
-  (employee_id, cin, nom, prenom, cadre_actuel, nom_ville, departement_id, hire_date, status)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+   (employee_id, cin, nom, prenom, telephone, cadre_actuel, nom_ville, departement_id, hire_date, status)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   [
     employe_id,
     cin,
     nom,
     prenom,
+    telephone,
     cadre_actuel,
     ville,
     departement,
@@ -118,6 +122,7 @@ export const postCompanyEmploye = async (req, res) => {
     statut
   ]
 );
+
 
 
 

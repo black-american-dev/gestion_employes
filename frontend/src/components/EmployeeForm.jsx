@@ -9,6 +9,7 @@ function EmployeeForm() {
   cin: "",
   nom: "",
   prenom: "",
+  telephone: "+212",
   cadre_actuel: "", 
   ville: "",
   date_embauche: "",
@@ -84,7 +85,17 @@ function EmployeeForm() {
             </div>
 
             <div className="form-group">
-              <label>Prénom</label>
+              <label>telephone</label>
+              <input
+                name="telephone"
+                value={form.telephone}
+                onChange={handleChange}
+                placeholder="First name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>cadre actuel</label>
               <input
                 name="cadre_actuel"
                 value={form.cadre_actuel}
