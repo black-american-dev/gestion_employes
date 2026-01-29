@@ -1,1 +1,12 @@
+# Electron / build outputs
+release/
+dist/
+win-unpacked/
+*.exe
+*.asar
+
+# Node
 node_modules/
+
+# Logs
+*.log
