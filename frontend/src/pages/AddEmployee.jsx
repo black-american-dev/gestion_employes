@@ -13,7 +13,7 @@ function AddEmployee() {
       <NavbarHeader />
       <div className="form-wrapper">
       <div className="form-card" style={{marginRight: "5px"}}>
-        <h1>Company employee</h1>
+        <h1>Direction employee</h1>
         <div className="form-actions">
             <button className="btn-primary" type="submit" onClick={() => {
               setCompanyEmp(true)

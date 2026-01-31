@@ -6,7 +6,7 @@ function Table(props) {
     const navigate = useNavigate()
     return (
 <div className="glass-card">
-  <h3 className="card-title">Employees</h3>
+  <h3 className="card-title"> Direction Employees</h3>
     <table>
       <thead>
         <tr>

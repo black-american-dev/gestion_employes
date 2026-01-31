@@ -7,7 +7,7 @@ function Table(props) {
 
     return (
 <div className="glass-card">
-  <h3 className="card-title">Employees</h3>
+  <h3 className="card-title">Judicial Employees</h3>
     <table>
       <thead>
         <tr>

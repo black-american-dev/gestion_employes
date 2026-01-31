@@ -3,16 +3,24 @@ import path from "path";
 import db from "../db/config.js";
 import { fileURLToPath } from "url";
 
-export const generateAttestationConge = (req, res) => {
+export const generateJudicialAttestationConge = (req, res) => {
+  const employeeId = req.params.id;
+
   try {
-    const employeeId = req.params.id;
-
     const { type, duty, subtitueEmployee, startDate, endDate } = req.body;
-
     const currentYear = new Date().getFullYear();
 
     const emp = db
-      .prepare("SELECT * FROM company_employees WHERE employee_id = ?")
+      .prepare(`
+        SELECT 
+          judicial_employees.*,
+          judicial_entities.entity_type,
+          judicial_entities.nom_ville AS entity_city
+        FROM judicial_employees
+        JOIN judicial_entities
+          ON judicial_employees.judicial_entity_id = judicial_entities.id
+        WHERE judicial_employees.employee_id = ?
+      `)
       .get(employeeId);
 
     if (!emp) {
@@ -30,24 +38,21 @@ export const generateAttestationConge = (req, res) => {
     const __dirname = path.dirname(__filename);
 
     const templatePath = path.join(
-      __dirname,
-      "..",
-      "templates",
-      "ATTESTATION DE CONGE (2).png"
-    );
-
-    const fontPath = path.join(__dirname, "..", "fonts", "Amiri-Regular.ttf");
-
-    const fileName = `${employeeId}_attestation_DE_CONGE_${Date.now()}.pdf`;
+          __dirname,
+          "..",
+          "templates",
+          "ATTESTATION DE CONGE (2).png"
+        );
+    
+        const fontPath = path.join(__dirname, "..", "fonts", "Amiri-Regular.ttf");
+    
+        const fileName = `${employeeId}_attestation_DE_CONGE_${Date.now()}.pdf`;
 
     const doc = new PDFDocument({ size: "A4", margin: 0 });
-
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${fileName}"`
-    );
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
+   
     doc.pipe(res);
 
     doc.on("error", (e) => {
@@ -57,7 +62,6 @@ export const generateAttestationConge = (req, res) => {
       } catch (_) {}
     });
 
-    // ---------- DRAW ----------
     doc.image(templatePath, 0, 0, { width: 595, height: 842 });
     doc.font(fontPath).fontSize(12);
 
@@ -70,31 +74,21 @@ export const generateAttestationConge = (req, res) => {
     doc.text(duty || "", 210, 250, { width: columnWidth, align: "right" });
     doc.text(telephone, 240, 295, { width: columnWidth, align: "right" });
 
-    doc.text(subtitueEmployee || "", 50, 310, {
-      width: columnWidth,
-      align: "right",
-    });
+    doc.text(subtitueEmployee || "", 50, 310, { width: columnWidth, align: "right" });
 
-    doc.text(startDate || "", 250, 395, {
-      width: columnWidth,
-      align: "right",
-    });
-    doc.text(endDate || "", 120, 395, {
-      width: columnWidth,
-      align: "right",
-    });
+    doc.text(startDate || "", 250, 395, { width: columnWidth, align: "right" });
+    doc.text(endDate || "", 120, 395, { width: columnWidth, align: "right" });
 
-    doc.text(String(currentYear), 300, 375, {
-      width: columnWidth,
-      align: "right",
-    });
+    doc.text(String(currentYear), 300, 375, { width: columnWidth, align: "right" });
 
+    doc.text(cin, 60, 465, { width: 180, align: "right" });
     doc.text(date, 205, 695, { width: 180, align: "right" });
 
-    db.prepare(`
-    INSERT INTO certificates (certificate_type, file_name, employee_id, employee_scope)
-    VALUES (?, ?, ?, 'company')
-  `).run(type, fileName, employeeId);
+   db.prepare(`
+  INSERT INTO certificates (certificate_type, file_name, employee_id, employee_scope)
+  VALUES (?, ?, ?, 'judicial')
+`).run(type, fileName, employeeId);
+
 
 
     doc.end();

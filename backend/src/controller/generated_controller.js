@@ -1,23 +1,22 @@
 import PDFDocument from "pdfkit";
+import fs from "fs";
 import path from "path";
 import db from "../db/config.js";
 import { fileURLToPath } from "url";
+import { PassThrough } from "stream";
 
-export const generateAttestation = async (req, res) => {
+export const generateAttestation = (req, res) => {
   try {
     const employeeId = req.params.id;
     const type = req.body.type;
 
-    const [rows] = await db.query(
-      "SELECT * FROM company_employees WHERE employee_id = ?",
-      [employeeId]
-    );
+    const emp = db
+      .prepare("SELECT * FROM company_employees WHERE employee_id = ?")
+      .get(employeeId);
 
-    if (!rows.length) {
+    if (!emp) {
       return res.status(404).json({ message: "Employee not found" });
     }
-
-    const emp = rows[0];
 
     const fullName = `${emp.nom} ${emp.prenom}`;
     const grade = emp.cadre_actuel;
@@ -28,32 +27,40 @@ export const generateAttestation = async (req, res) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    const templatePath = path.join(
-      __dirname,
-      "..",
-      "templates",
-      "ATTESTATION DE TRAVAIL temp (1).jpg"
-    );
+    const templatePath = path.join(__dirname, "..", "templates", "ATTESTATION DE TRAVAIL temp (1).jpg");
+    const fontPath = path.join(__dirname, "..", "fonts", "Amiri-Regular.ttf");
 
-    const fontPath = path.join(
-      __dirname,
-      "..",
-      "fonts",
-      "Amiri-Regular.ttf"
-    );
+    const fileName = `${employeeId}_judicial_attestation_${Date.now()}.pdf`;
+    const generatedDir = path.join(__dirname, "..", "generated");
+    const filePath = path.join(generatedDir, fileName);
 
-    const fileName = `${employeeId}_attestation_${Date.now()}.pdf`;
+    if (!fs.existsSync(generatedDir)) fs.mkdirSync(generatedDir, { recursive: true });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
     const doc = new PDFDocument({ size: "A4", margin: 0 });
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${fileName}"`
-    );
+    const fileStream = fs.createWriteStream(filePath);
+    const tee = new PassThrough();
 
-    // ✅ ONLY stream to response
-    doc.pipe(res);
+    fileStream.on("finish", () => {
+      try {
+        db.prepare(`
+          INSERT INTO certificates (certificate_type, file_name, employee_id)
+          VALUES (?, ?, ?)
+        `).run(type, fileName, employeeId);
+      } catch (e) {
+        console.error("DB insert failed:", e.message);
+      }
+    });
+
+    fileStream.on("error", (e) => console.error("fileStream error:", e.message));
+    res.on("error", (e) => console.error("res error:", e.message));
+
+    doc.pipe(tee);
+    tee.pipe(res);
+    tee.pipe(fileStream);
 
     doc.image(templatePath, 0, 0, { width: 595, height: 842 });
     doc.font(fontPath).fontSize(12);
@@ -64,21 +71,9 @@ export const generateAttestation = async (req, res) => {
     doc.text(cin, 60, 465, { width: 180, align: "right" });
     doc.text(date, 205, 695, { width: 180, align: "right" });
 
-    // ✅ INSERT INTO DB (independent of filesystem)
-    await db.query(
-      `
-      INSERT INTO certificates 
-      (certificate_type, file_name, employee_id)
-      VALUES (?, ?, ?)
-      `,
-      [type, fileName, employeeId]
-    );
-
     doc.end();
   } catch (error) {
     console.error(error);
-    if (!res.headersSent) {
-      res.status(500).json({ message: "PDF generation failed" });
-    }
+    if (!res.headersSent) res.status(500).json({ message: "PDF generation failed", error: error.message });
   }
 };

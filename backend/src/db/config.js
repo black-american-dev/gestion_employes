@@ -1,14 +1,11 @@
-import mysql from "mysql2/promise";
+import Database from "better-sqlite3";
+import path from "path";
 
-const db = mysql.createPool({
-  host: "nozomi.proxy.rlwy.net",
-  user: "root",
-  password: "CLosJAvWzkzzoGwDPjPgSWwgItQtWXkM",
-  database: "hr_system",
-  port: 36644,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const dbDir = process.env.DATABASE_DIR || process.cwd();
+const dbPath = path.join(dbDir, "hr_system.db");
+
+const db = new Database(dbPath);
+
+db.pragma("foreign_keys = ON");
 
 export default db;

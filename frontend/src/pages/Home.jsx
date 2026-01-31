@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api/api";
-import Table from "../components/table";
+import Table from "../components/Table";
 import TableJudicial from "../components/TableJudicial";
 import SearchInput from "../components/SearchInput";
 import './navbar.css'

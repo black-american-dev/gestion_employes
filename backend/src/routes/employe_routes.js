@@ -18,6 +18,7 @@ import { generateJudicialAttestation } from "../controller/generatedJudicial_con
 import { globalSearch } from "../controller/search_controller.js"
 import { getDocuments } from "../controller/documents_controller.js"
 import { generateAttestationConge } from "../controller/generates_licences_controller.js"
+import { generateJudicialAttestationConge } from "../controller/genratedJudicialConge_controller.js"
 
 
 
@@ -38,6 +39,7 @@ router.delete("/judicialEmploye/:id" , deleteJudicialEmploye)
 router.post("/generate/:id" , generateAttestation)
 router.post("/generateConge/:id" , generateAttestationConge)
 router.post("/generateJudicial/:id" , generateJudicialAttestation)
+router.post("/generateJudicialConge/:id" , generateJudicialAttestationConge)
 // annual absences :
 router.post("/annual-absence/import", uploadExcel.single("file"), importAnnualAbsence)
 router.get("/annual-absence", getAnnualAbsent)

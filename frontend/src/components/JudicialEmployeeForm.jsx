@@ -11,7 +11,7 @@ const [form, setForm] = useState({
     prenom: "",
     telephone: "+212",
     cadre_actuel: "",
-    judicial_entity_id: "",
+    judicial_entity_id: 0,
     department: "",
     date_embauche: "",
     statut: "active",
@@ -139,8 +139,8 @@ const [form, setForm] = useState({
                 onChange={handleChange}
               >
                 <option value="">Select department</option>
-                <option value="1">النيابة العامة</option>
-                <option value="2">رئاسة</option>
+                <option value="النيابة العامة">النيابة العامة</option>
+                <option value="رئاسة">رئاسة</option>
               </select>
             </div>
 

@@ -8,6 +8,7 @@ import NavbarHeader from "../components/NavbarHeader.jsx";
 import DeleteButton from "../components/DeleteButton.jsx";
 import Modal from "../components/Modal.jsx";
 import AttestationCongeForm from "../components/AttestationCongeForm.jsx";
+import AttestationJudicialConge from "../components/AttestationJudicialConge.jsx";
 
 function JudicialEmploye() {
   const [employee, setEmployee] = useState({});
@@ -97,8 +98,7 @@ function JudicialEmploye() {
                   onClick={() => setOpenForm(true)}
                 >
                   Gestion des licences administratives (PDF)
-              </button> <br /><br />             
-              <h3 style={{ marginBottom: "15px"  }}> delete employee</h3>
+              </button> <br /><br />
               <div onClick={handleDelete}>
                 <DeleteButton />
               </div>
@@ -122,7 +122,7 @@ function JudicialEmploye() {
         </section>
       </main>
       <Modal open={openForm} onClose={() => setOpenForm(false)}>
-        <AttestationCongeForm
+        <AttestationJudicialConge
           employeeId={employee.employee_id}
           onClose={() => setOpenForm(false)}
         />

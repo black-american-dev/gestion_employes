@@ -98,8 +98,10 @@ function CompanyEmploye() {
                   onClick={() => setOpenForm(true)}
                 >
                   Gestion des licences administratives (PDF)
-              </button>
-
+              </button> <br /><br />
+              <div onClick={handleDelete}>
+                <DeleteButton />
+              </div>
             </div>
           </div>
           
@@ -117,14 +119,6 @@ function CompanyEmploye() {
                 </div>
               ))
               )}
-          </div>
-          <div className={styles.card}>
-            <h1 className={styles.heroTitle}>
-              Delete <span>This employee !</span>
-            </h1>
-              <div onClick={handleDelete}>
-                <DeleteButton />
-              </div>
           </div>
         </section>
       </main>

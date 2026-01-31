@@ -39,7 +39,7 @@ function EmployeeForm() {
   return (
     <div className="form-wrapper">
       <div className="form-card">
-        <h2>Add New Company Employee</h2>
+        <h2>Add New Direction Employee</h2>
         <p className="subtitle">Fill employee information</p>
 
         <form onSubmit={handleSubmit}>

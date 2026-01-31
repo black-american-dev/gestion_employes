@@ -94,7 +94,7 @@ function AnnualAbsence() {
 
       <div className="form-wrapper">
         <div className="form-card" style={{ marginRight: "5px" }}>
-          <h1>Add new anuall absence year</h1>
+          <h1>Add new annual absence year</h1>
           <div className="form-actions">
             <button
               className="btn-primary"
@@ -111,7 +111,7 @@ function AnnualAbsence() {
         </div>
 
         <div className="form-card" style={{ marginLeft: "5px" }}>
-          <h1>Show anuall absences</h1>
+          <h1>Show annual absences</h1>
           <div className="form-actions">
             <button
               className="btn-primary"

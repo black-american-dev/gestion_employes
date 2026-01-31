@@ -1,96 +1,97 @@
-import XLSX from "xlsx"
-import fs from "fs"
-import path from "path"
-import db from "../db/config.js"
-import { getAnnualAbsencesDir } from "../utils/storage.js"
+import XLSX from "xlsx";
+import fs from "fs";
+import path from "path";
+import db from "../db/config.js";
+import { getAnnualAbsencesDir } from "../utils/storage.js";
 
-export const importAnnualAbsence = async (req, res) => {
-  const { year } = req.body
+export const importAnnualAbsence = (req, res) => {
+  const { year } = req.body;
 
   if (!year) {
-    return res.status(400).json({ message: "Year is required" })
+    return res.status(400).json({ message: "Year is required" });
   }
 
   if (!req.file) {
-    return res.status(400).json({ message: "Excel file is required" })
+    return res.status(400).json({ message: "Excel file is required" });
   }
 
   try {
-    // ✅ FORCE correct path (do NOT trust req.file.path blindly)
-    const annualDir = getAnnualAbsencesDir()
-    const filePath = path.join(annualDir, req.file.filename)
+    const annualDir = getAnnualAbsencesDir();
+    const filePath = path.join(annualDir, req.file.filename);
 
-    // Insert import record
-    const [importResult] = await db.query(
-      `INSERT INTO annual_absence_imports (year, file_name)
-       VALUES (?, ?)`,
-      [year, req.file.filename]
-    )
+    const importResult = db
+      .prepare(
+        `INSERT INTO annual_absence_imports (year, file_name)
+         VALUES (?, ?)`
+      )
+      .run(year, req.file.filename);
 
-    const importId = importResult.insertId
+    const importId = importResult.lastInsertRowid;
 
-    // ✅ Read Excel from SAFE path
-    const workbook = XLSX.readFile(filePath)
-    const sheetName = workbook.SheetNames[0]
-    const sheet = workbook.Sheets[sheetName]
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" })
+    const workbook = XLSX.readFile(filePath);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+    const insertStmt = db.prepare(
+      `INSERT INTO annual_absences (
+        import_id,
+        year,
+        employee_id,
+        cin,
+        cadre_actuel,
+        nom,
+        prenom,
+        fullName,
+        departement,
+        situation
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    );
 
     for (const row of rows) {
-      await db.query(
-        `INSERT INTO annual_absences (
-          import_id,
-          year,
-          employee_id,
-          cin,
-          cadre_actuel,
-          nom,
-          prenom,
-          fullName,
-          departement,
-          situation
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          importId,
-          year,
-          row.employee_id,
-          row.cin,
-          row.cadre_actuel,
-          row.nom,
-          row.prenom,
-          row.fullName,
-          row.departement,
-          row.situation
-        ]
-      )
+      insertStmt.run(
+        importId,
+        year,
+        row.employee_id,
+        row.cin,
+        row.cadre_actuel,
+        row.nom,
+        row.prenom,
+        row.fullName,
+        row.departement,
+        row.situation
+      );
     }
 
     res.json({
       message: "Annual absence imported successfully",
       year,
-      totalRows: rows.length
-    })
-    console.log("multer saved:", req.file.path);
-console.log("controller reads:", filePath);
+      totalRows: rows.length,
+    });
 
+    console.log("multer saved:", req.file.path);
+    console.log("controller reads:", filePath);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({
       message: "Import failed",
-      error: error.message
-    })
+      error: error.message,
+    });
   }
-}
+};
 
+export const getAnnualAbsent = (req, res) => {
+  const rows = db
+    .prepare(`
+      SELECT *
+      FROM annual_absences
+    `)
+    .all();
 
-export const getAnnualAbsent = async (req,res) => {
-   const [rows] = await db.query(`
-    SELECT *
-    FROM annual_absences
-  `)
-    res.status(200).json(rows)
-}
+  res.status(200).json(rows);
+};
 
-export const updateAnnualAbsenceCell = async (req, res) => {
+export const updateAnnualAbsenceCell = (req, res) => {
   const { id } = req.params;
   const { field, value } = req.body;
 
@@ -101,7 +102,7 @@ export const updateAnnualAbsenceCell = async (req, res) => {
     "fullName",
     "cadre_actuel",
     "departement",
-    "situation"
+    "situation",
   ];
 
   if (!allowedFields.includes(field)) {
@@ -109,30 +110,30 @@ export const updateAnnualAbsenceCell = async (req, res) => {
   }
 
   try {
-    await db.query(
-      `UPDATE annual_absences SET ${field} = ? WHERE id = ?`,
-      [value, id]
+    db.prepare(`UPDATE annual_absences SET ${field} = ? WHERE id = ?`).run(
+      value,
+      id
     );
+
     res.json({ message: "Updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-export const exportAnnualAbsencesToExcel = async (req, res) => {
+export const exportAnnualAbsencesToExcel = (req, res) => {
   const { year } = req.query;
 
   try {
     let query = "SELECT * FROM annual_absences";
-    let params = [];
+    const params = [];
 
     if (year) {
       query += " WHERE year = ?";
       params.push(year);
     }
 
-    const [rows] = await db.query(query, params);
+    const rows = db.prepare(query).all(...params);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "No data to export" });
@@ -157,22 +158,22 @@ export const exportAnnualAbsencesToExcel = async (req, res) => {
     );
 
     res.send(buffer);
-
   } catch (error) {
     console.error("EXPORT ERROR:", error);
     res.status(500).json({ message: "Export failed", error: error.message });
   }
 };
 
-export const getAnnualAbsenceYears = async (req, res) => {
+export const getAnnualAbsenceYears = (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT DISTINCT year
-      FROM annual_absences
-      ORDER BY year DESC
-    `);
+    const rows = db
+      .prepare(`
+        SELECT DISTINCT year
+        FROM annual_absences
+        ORDER BY year DESC
+      `)
+      .all();
 
-    // convert [{year: 2026}, {year: 2025}] → [2026, 2025]
     const years = rows.map((r) => r.year);
 
     res.json(years);

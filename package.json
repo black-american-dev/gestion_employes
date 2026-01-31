@@ -1,6 +1,6 @@
 {
   "name": "electron-hr-system-demo-version",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "electron/main.js",
   "author": "Habib",
   "scripts": {
@@ -8,6 +8,7 @@
     "build": "electron-builder"
   },
   "dependencies": {
+    "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
@@ -21,11 +22,12 @@
     "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "electron": "^29.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9"
   },
   "build": {
     "appId": "com.habib.hr",
-    "productName": "HR System",
+    "productName": "HR Docs",
     "files": [
       "electron/**/*",
       "backend/**/*",
@@ -37,7 +39,18 @@
       "backend/src/templates/**",
       "backend/src/fonts/**"
     ],
-    "win": { "target": "nsis" },
-    "directories": { "output": "release" }
+    "extraResources": [
+      {
+        "from": "backend/src/db/shema.sql",
+        "to": "backend/src/db/shema.sql"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/favicon2.ico"
+    },
+    "directories": {
+      "output": "release"
+    }
   }
 }

@@ -22,9 +22,6 @@ function Dashboard() {
                     onClick={()=> navigate("/generate")}>
                     <i className="fas fa-file-pdf"></i> Quick Generate
                 </button>
-                <button className="btn btnSecondary">
-                    <i className="fas fa-chart-line"></i> View Reports
-                </button>
                 <button className="btn btnSecondary" onClick={()=> navigate("/addEmploye")}>
                     <i className="fas fa-user-plus"></i> Add Employee
                 </button>

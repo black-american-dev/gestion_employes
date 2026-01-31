@@ -2,6 +2,11 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import router from "./routes/employe_routes.js"
+import db from "./db/config.js";
+import { initSqliteSchema } from "./init/init.js";
+
+initSqliteSchema(db);
+
 
 dotenv.config()
 const PORT = process.env.PORT || 8080
